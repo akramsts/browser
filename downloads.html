@@ -240,8 +240,8 @@
         </header>
 
         <section class="content-card">
-            <a href="game/game.html" class="action-btn play-btn popup-trigger" data-title="Play Game"
-                data-message="Do you want to start <b>Gree Runner</b> now?">
+            <a href="https://akramsts.github.io/web-game/" class="action-btn play-btn popup-trigger"
+                data-title="Play Game" data-message="Do you want to start <b>Gree Runner</b> now?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -249,7 +249,7 @@
                 Play Game in Browser
             </a>
 
-            <a href="https://github.com/mdakramsts-maker/bbrowser/releases/download/1/GreeRunner-Android.apk"
+            <a href="https://github.com/akramsts/android-game/releases/download/1.0/GreeRunner-Android.apk"
                 class="action-btn popup-trigger" data-title="Confirm Download"
                 data-message="Do you want to download <b>Gree Runner for Android</b>?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -261,7 +261,7 @@
                 Download for Android
             </a>
 
-            <a href="https://github.com/mdakramsts-maker/bbrowser/releases/download/v1.0.0/GreeRunner-Setup.exe"
+            <a href="https://github.com/akramsts/pc-game/releases/download/1.0/GreeRunner-Setup.exe"
                 class="action-btn popup-trigger" data-title="Confirm Download"
                 data-message="Do you want to download <b>Gree Runner for Windows</b>?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -319,7 +319,7 @@
         // OK click karne par Play ya Download start karein
         confirmBtn.addEventListener('click', () => {
             if (currentActionUrl) {
-                if (currentActionUrl.endsWith('.html')) {
+                if (currentActionUrl.endsWith('.html') || currentActionUrl.includes('github.io')) {
                     window.location.href = currentActionUrl;
                 } else {
                     const tempLink = document.createElement('a');
