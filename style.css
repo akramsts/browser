@@ -1,0 +1,557 @@
+/* ============================================
+   COLOR VARIABLES
+   ============================================ */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #111111;
+    --title-color: #f3b407;
+    --card-bg: #ffffff;
+    --placeholder-color: #666666;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --mic-border: #eca50b;
+    --history-hover: rgba(0, 0, 0, 0.05);
+    --border-color: #eeeeee;
+    --icon-color: #5f6368;
+}
+
+html.dark-mode,
+body.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --title-color: #ffca28;
+    --card-bg: #1e1e1e;
+    --placeholder-color: #888888;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --mic-border: #ffca28;
+    --history-hover: rgba(255, 255, 255, 0.1);
+    --border-color: #333333;
+    --icon-color: #9aa0a6;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *:before,
+html.theme-transition *:after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, fill 0.3s ease, stroke 0.3s ease, background 0.3s ease !important;
+    transition-delay: 0s !important;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid var(--accent-color);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    padding-top: 120px;
+    transition: background 0.3s ease, color 0.3s ease;
+    animation: pageFadeIn 0.15s ease-out forwards;
+}
+
+/* Page Navigation Entry Animation */
+body.page-enter {
+    animation: pageFadeIn 0.15s ease-out forwards;
+}
+
+@keyframes pageFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   TITLE
+   ============================================ */
+.title {
+    font-size: 85px;
+    font-weight: bold;
+    color: var(--title-color);
+    letter-spacing: -2px;
+    margin-bottom: 45px;
+    user-select: none;
+}
+
+/* ============================================
+   SEARCH CONTAINER (unified box)
+   ============================================ */
+.search-container {
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+}
+
+/* Main search box */
+.search-box {
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 50px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 6px var(--shadow-color);
+    transition: box-shadow 0.15s ease, border-radius 0.15s ease;
+    cursor: text;
+    position: relative;
+    z-index: 2;
+}
+
+/* When history is open, round only top corners */
+.search-container.history-open .search-box {
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 2px 6px var(--shadow-color);
+}
+
+/* Focused state */
+.search-box.focused {
+    box-shadow: 0 4px 14px var(--shadow-color);
+}
+
+/* ============================================
+   INPUT FIELD
+   ============================================ */
+#searchInput {
+    flex: 1;
+    min-width: 0;
+    /* Prevents input from stretching outside the box on long sentences */
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: inherit;
+}
+
+#searchInput::placeholder {
+    color: var(--placeholder-color);
+    font-size: 18px;
+}
+
+/* ============================================
+   MIC ICON
+   ============================================ */
+.mic-icon {
+    padding: 0;
+    outline: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 2px solid var(--mic-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+    color: var(--text-color);
+}
+
+.mic-icon:hover {
+    box-shadow: 0 0 6px var(--shadow-color);
+}
+
+.mic-icon:active {
+    background-color: var(--history-hover);
+}
+
+/* Pro-level invisible touch target for small icons */
+.mic-icon::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    bottom: -6px;
+    left: -6px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Listening state */
+.mic-icon.listening {
+    background: #ffe8b3;
+    border-color: var(--mic-border);
+    animation: mic-pulse 1s ease-in-out infinite;
+}
+
+html.dark-mode .mic-icon.listening,
+body.dark-mode .mic-icon.listening {
+    background: rgba(255, 202, 40, 0.2);
+}
+
+@keyframes mic-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(236, 165, 11, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(236, 165, 11, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(236, 165, 11, 0);
+    }
+}
+
+/* ============================================
+   CLEAR BUTTON
+   ============================================ */
+#clearBtn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--icon-color);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+    flex-shrink: 0;
+    outline: none;
+    position: relative;
+}
+
+/* Pro-level invisible touch target */
+#clearBtn::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+    left: -8px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+#clearBtn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#clearBtn:hover {
+    color: var(--text-color);
+    background: var(--history-hover);
+}
+
+#clearBtn:active {
+    background: rgba(150, 150, 150, 0.2);
+}
+
+/* ============================================
+   HISTORY DROPDOWN (Chrome style)
+   ============================================ */
+.history-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    overflow: hidden;
+    max-height: 50vh;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0.15s;
+    z-index: 1;
+    margin-top: -2px;
+}
+
+.history-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0s;
+}
+
+/* Custom Scrollbar for Dropdown */
+.history-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+    margin-bottom: 12px;
+}
+
+.history-dropdown::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.history-dropdown::-webkit-scrollbar-thumb:hover {
+    background: var(--placeholder-color);
+}
+
+/* History item */
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-top: 1px solid var(--border-color);
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.history-item:first-child {
+    border-top: none;
+    padding-top: 14px;
+}
+
+.history-item:last-child {
+    padding-bottom: 14px;
+}
+
+.history-item:hover,
+.history-item.selected {
+    background: var(--history-hover);
+}
+
+/* Clock icon */
+.history-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--icon-color);
+    flex-shrink: 0;
+}
+
+.history-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* History text */
+.history-text {
+    flex: 1;
+    font-size: 16px;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.history-text b {
+    font-weight: 600;
+}
+
+/* Delete button */
+.history-delete {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: var(--icon-color);
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    position: relative;
+}
+
+/* Pro-level invisible touch target */
+.history-delete::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    bottom: -8px;
+    left: -8px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.history-delete:hover {
+    opacity: 1;
+    background: var(--history-hover);
+}
+
+.history-delete:active {
+    background: rgba(150, 150, 150, 0.2);
+}
+
+/* ============================================
+   TOP RIGHT MENU
+   ============================================ */
+.top-menu {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 2000;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--text-color);
+    transition: background 0.15s ease;
+    position: relative;
+}
+
+/* Premium invisible touch target (expands to 48x48) */
+.menu-btn::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    bottom: -6px;
+    left: -6px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.menu-btn:hover {
+    background: var(--history-hover);
+}
+
+.menu-btn:active {
+    background: rgba(150, 150, 150, 0.2);
+}
+
+.menu {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: var(--card-bg);
+    box-shadow: 0 8px 24px var(--shadow-color);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.15s;
+}
+
+.menu.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0s;
+}
+
+.menu-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-item:hover {
+    background: var(--history-hover);
+}
+
+.menu-item svg {
+    flex-shrink: 0;
+    color: var(--icon-color);
+    transition: color 0.15s ease;
+}
+
+.menu-item:hover svg {
+    color: var(--text-color);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+    body {
+        padding-top: 80px;
+    }
+
+    .title {
+        font-size: 60px;
+        margin-bottom: 35px;
+    }
+
+    .search-box {
+        padding: 12px 16px;
+    }
+
+    #searchInput,
+    #searchInput::placeholder {
+        font-size: 16px;
+    }
+
+    .history-item {
+        padding: 10px 16px;
+    }
+
+    .history-delete {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 400px) {
+    .title {
+        font-size: 48px;
+    }
+}

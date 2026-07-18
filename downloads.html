@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <link rel="icon" href="browser-192.png" type="image/png">
+
+    <link rel="manifest" href="browser-manifest.json">
+    <meta name="theme-color" content="#f3b407">
+    <link rel="apple-touch-icon" href="browser-192.png">
+
+    <title>Gree Runner - Download</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="color-scheme" content="light dark">
+
+    <script src="theme.js"></script>
+
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            min-height: 52px;
+            cursor: pointer;
+        }
+
+        .action-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-btn:hover {
+            background-color: var(--btn-hover);
+            border-color: var(--accent-color);
+        }
+
+        /* Play Button Highlight */
+        .action-btn.play-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ff9800 100%);
+            color: #ffffff;
+            border: 1px solid transparent;
+        }
+
+        html.dark-mode .action-btn.play-btn,
+        body.dark-mode .action-btn.play-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ff9800 100%);
+        }
+
+        .action-btn.play-btn:hover {
+            box-shadow: 0 6px 16px rgba(243, 180, 7, 0.4);
+        }
+
+        /* Confirmation Popup Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0s 0.2s;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.2s ease, visibility 0s 0s;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 340px;
+            padding: 30px 24px 24px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            transform: scale(0.95);
+            transition: transform 0.2s ease-out;
+            position: relative;
+            z-index: 10000;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 0 10px 0;
+        }
+
+        .modal-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            line-height: 1.5;
+        }
+
+        /* Modal Buttons */
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: background 0.15s, box-shadow 0.15s;
+            flex: 1;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(150, 150, 150, 0.1);
+            color: var(--text-color);
+        }
+
+        .modal-btn-cancel:hover {
+            background: rgba(150, 150, 150, 0.2);
+        }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #ff9800 100%);
+            color: #ffffff;
+        }
+
+        .modal-btn-confirm:hover {
+            box-shadow: 0 4px 12px rgba(243, 180, 7, 0.4);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background: rgba(150, 150, 150, 0.1);
+            color: var(--text-color);
+        }
+
+        /* Footer */
+        .footer-section {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .content-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <header class="hero-card">
+            <div class="close-btn-wrapper">
+                <a href="index.html" class="close-btn" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title">Gree Runner</h1>
+                <p class="hero-subtitle">Endless 2D Runner Game</p>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <a href="game/game.html" class="action-btn play-btn popup-trigger" data-title="Play Game"
+                data-message="Do you want to start <b>Gree Runner</b> now?">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Play Game in Browser
+            </a>
+
+            <a href="https://github.com/mdakramsts-maker/bbrowser/releases/download/1/GreeRunner-Android.apk"
+                class="action-btn popup-trigger" data-title="Confirm Download"
+                data-message="Do you want to download <b>Gree Runner for Android</b>?">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download for Android
+            </a>
+
+            <a href="https://github.com/mdakramsts-maker/bbrowser/releases/download/v1.0.0/GreeRunner-Setup.exe"
+                class="action-btn popup-trigger" data-title="Confirm Download"
+                data-message="Do you want to download <b>Gree Runner for Windows</b>?">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download for Windows
+            </a>
+        </section>
+
+        <footer class="footer-section">
+            © 2026 Gree Runner
+        </footer>
+    </main>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title">Confirm Download</h3>
+            <p class="modal-text" id="modalMessage">Do you want to download this file?</p>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('confirmModal');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const modalTitle = document.querySelector('.modal-title');
+        const modalMessage = document.getElementById('modalMessage');
+
+        // Nayi class 'popup-trigger' wale sabhi buttons ko select karein
+        const popupTriggers = document.querySelectorAll('.popup-trigger');
+
+        let currentActionUrl = "";
+
+        // Button click hone par popup dikhao
+        popupTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function (e) {
+                e.preventDefault();
+                currentActionUrl = this.getAttribute('href');
+
+                // Button se title aur message nikaal kar modal mein set karein
+                modalTitle.textContent = this.getAttribute('data-title');
+                modalMessage.innerHTML = this.getAttribute('data-message');
+
+                modal.classList.add('show');
+            });
+        });
+
+        // OK click karne par Play ya Download start karein
+        confirmBtn.addEventListener('click', () => {
+            if (currentActionUrl) {
+                if (currentActionUrl.endsWith('.html')) {
+                    window.location.href = currentActionUrl;
+                } else {
+                    const tempLink = document.createElement('a');
+                    tempLink.href = currentActionUrl;
+                    tempLink.setAttribute('download', '');
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                }
+            }
+            modal.classList.remove('show');
+        });
+
+        // Cancel click karne par modal band karein
+        cancelBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+        });
+
+        // Modal ke bahar (overlay) par click karne se popup close ho
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

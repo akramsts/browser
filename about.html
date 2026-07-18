@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="browser-192.png" type="image/png">
+
+    <link rel="manifest" href="browser-manifest.json">
+    <meta name="theme-color" content="#f3b407">
+    <link rel="apple-touch-icon" href="browser-192.png">
+
+    <title>About - Browser Core</title>
+
+    <meta name="color-scheme" content="light dark">
+
+    <!-- FOUC Root Fix: Apply to HTML before body loads -->
+    <script src="theme.js"></script>
+
+    <!-- Shared Pages CSS -->
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 0 24px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .feature-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 0 8px 0;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Details List */
+        .details-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Footer Section */
+        .footer-section {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+
+        .footer-author {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .content-card {
+                padding: 24px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .feature-item {
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <header class="hero-card">
+            <div class="close-btn-wrapper">
+                <a href="index.html" class="close-btn" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title">Browser Core</h1>
+                <p class="hero-subtitle">
+                    A privacy-first start page that brings the web back to its roots—fast, focused, and
+                    distraction-free.
+                </p>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3 class="feature-title">Ultra Fast</h3>
+                    <p class="feature-description">Lightning-fast search with zero bloat. Built for speed.</p>
+                </div>
+                <div class="feature-item">
+                    <h3 class="feature-title">Private</h3>
+                    <p class="feature-description">No tracking, no analytics. Your searches stay yours.</p>
+                </div>
+                <div class="feature-item">
+                    <h3 class="feature-title">Beautiful</h3>
+                    <p class="feature-description">Clean design with light and dark themes. Easy on the eyes.</p>
+                </div>
+                <div class="feature-item">
+                    <h3 class="feature-title">Responsive</h3>
+                    <p class="feature-description">Works perfectly on any device. Mobile-first design.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2 class="section-title">Technical Details</h2>
+            <div class="details-list">
+                <div class="detail-row">
+                    <span class="detail-label">Version</span>
+                    <span class="detail-value">1.0 Pro</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Performance</span>
+                    <span class="detail-value">Ultra Fast</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Search Engines</span>
+                    <span class="detail-value">7 Supported</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Features</span>
+                    <span class="detail-value">Voice Search • Local History</span>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer-section">
+            Made by <span class="footer-author">Akram</span>
+        </footer>
+    </main>
+</body>
+
+</html>

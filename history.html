@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="browser-192.png" type="image/png">
+
+    <link rel="manifest" href="browser-manifest.json">
+    <meta name="theme-color" content="#f3b407">
+    <link rel="apple-touch-icon" href="browser-192.png">
+
+    <title>History - Browser</title>
+
+    <meta name="color-scheme" content="light dark">
+
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px 32px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            gap: 12px;
+            position: relative;
+            min-height: 40px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            flex-shrink: 0;
+            max-width: 200px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .clear-all-text-btn {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 40px;
+            outline: none;
+            flex-shrink: 0;
+            width: 110px;
+            box-sizing: border-box;
+            transition: background 0.2s ease,
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .clear-all-text-btn:hover {
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        .hide-element {
+            opacity: 0 !important;
+            transform: scale(0.6) !important;
+            pointer-events: none;
+        }
+
+        .history-search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(150, 150, 150, 0.1);
+            border-radius: 20px;
+            height: 40px;
+            position: absolute;
+            top: 0;
+            right: 122px;
+            width: 40px;
+            z-index: 10;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                right 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.3s ease,
+                box-shadow 0.3s;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .history-search-box.expanded {
+            right: 0 !important;
+            width: 100% !important;
+            box-shadow: inset 0 0 0 1px var(--border-color);
+            background: transparent;
+            cursor: text;
+        }
+
+        .history-search-box:not(.expanded):hover {
+            background: rgba(150, 150, 150, 0.18);
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            position: absolute;
+            left: 11px;
+            transition: color 0.3s;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+
+        .history-search-box.expanded .search-icon {
+            color: var(--text-color);
+        }
+
+        #historySearchInput {
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 15px;
+            font-family: inherit;
+            width: 100%;
+            height: 100%;
+            padding-left: 38px;
+            padding-right: 32px;
+            outline: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .history-search-box.expanded #historySearchInput {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.3s ease 0.1s;
+        }
+
+        #historySearchInput::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 4px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+            transition: opacity 0.2s, transform 0.2s, background 0.2s;
+        }
+
+        .clear-search-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .clear-search-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        .clear-search-btn:hover {
+            background: rgba(150, 150, 150, 0.2);
+            color: var(--text-color);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 0;
+            border-radius: 12px;
+            position: relative;
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .history-list-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .history-time {
+            font-variant-numeric: tabular-nums;
+            font-weight: 500;
+        }
+
+        .history-icon-wrapper {
+            width: 36px;
+            height: 36px;
+            background: rgba(150, 150, 150, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .history-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+            outline: none;
+        }
+
+        .history-text-group {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .history-query {
+            font-size: 15px;
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            outline: none;
+        }
+
+        .history-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.15s ease, background 0.15s;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            outline: none;
+            margin-left: 12px;
+        }
+
+        .history-delete-btn:hover {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .history-delete-btn:active {
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        html.dark-mode .history-delete-btn:hover,
+        body.dark-mode .history-delete-btn:hover {
+            background: rgba(255, 71, 87, 0.15);
+        }
+
+        .history-date-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 16px;
+            background: rgba(150, 150, 150, 0.08);
+            border-radius: 8px;
+            margin: 16px 0 8px 0;
+        }
+
+        .history-date-header:first-child {
+            margin-top: 4px;
+        }
+
+        .date-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .no-results-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0s 0.2s;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.2s ease, visibility 0s 0s;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 340px;
+            padding: 30px 24px 24px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            transform: scale(0.95);
+            transition: transform 0.2s ease-out;
+            position: relative;
+            z-index: 10000;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 0 10px 0;
+        }
+
+        .modal-text {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: background 0.15s, box-shadow 0.15s;
+            flex: 1;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(150, 150, 150, 0.1);
+            color: var(--text-color);
+        }
+
+        .modal-btn-cancel:hover {
+            background: rgba(150, 150, 150, 0.2);
+        }
+
+        .modal-btn-delete {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+        }
+
+        .modal-btn-delete:hover {
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .content-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="hero-card">
+            <div class="close-btn-wrapper">
+                <a href="index.html" class="close-btn" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title">Browsing History</h1>
+                <p class="hero-subtitle">View and manage your recent searches</p>
+            </div>
+        </div>
+
+        <section class="content-card">
+            <div class="header-actions">
+                <h2 class="section-title">All History</h2>
+                <div class="history-search-box" id="historySearchBox">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="historySearchInput" placeholder="Search..." autocomplete="off">
+                    <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <button id="clearAllHistoryBtn" class="clear-all-text-btn">Delete All</button>
+            </div>
+
+            <div id="historyList" class="history-list"></div>
+        </section>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 class="modal-title">Clear History</h3>
+            <p class="modal-text">Are you sure you want to clear your entire browsing history?</p>
+            <div class="modal-actions">
+                <button id="confirmModalCancel" class="modal-btn modal-btn-cancel">Cancel</button>
+                <button id="confirmModalDelete" class="modal-btn modal-btn-delete">Delete All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const storage = {
+            get: (key) => {
+                try { return localStorage.getItem(key); }
+                catch (e) { console.error('localStorage error:', e); return null; }
+            },
+            set: (key, value) => {
+                try { localStorage.setItem(key, value); }
+                catch (e) { console.error('localStorage error:', e); }
+            },
+            remove: (key) => {
+                try { localStorage.removeItem(key); }
+                catch (e) { console.error('localStorage error:', e); }
+            }
+        };
+
+        const historyListContainer = document.getElementById('historyList');
+        const clearAllHistoryBtn = document.getElementById('clearAllHistoryBtn');
+        const searchBox = document.getElementById('historySearchBox');
+        const searchInput = document.getElementById('historySearchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const confirmModalCancel = document.getElementById('confirmModalCancel');
+        const confirmModalDelete = document.getElementById('confirmModalDelete');
+        const sectionTitle = document.querySelector('.section-title');
+
+        searchBox.addEventListener('click', () => {
+            if (!searchBox.classList.contains('expanded')) {
+                searchBox.classList.add('expanded');
+
+                if (sectionTitle) sectionTitle.classList.add('hide-element');
+                if (clearAllHistoryBtn) clearAllHistoryBtn.classList.add('hide-element');
+
+                searchInput.focus();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchBox.contains(e.target) && searchInput.value.trim() === '') {
+                searchBox.classList.remove('expanded');
+
+                if (sectionTitle) sectionTitle.classList.remove('hide-element');
+                if (clearAllHistoryBtn) clearAllHistoryBtn.classList.remove('hide-element');
+
+                clearSearchBtn.classList.remove('show');
+            }
+        });
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length > 0) {
+                clearSearchBtn.classList.add('show');
+            } else {
+                clearSearchBtn.classList.remove('show');
+            }
+            filterHistory(query);
+        });
+
+        clearSearchBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchInput.value = '';
+            clearSearchBtn.classList.remove('show');
+            filterHistory('');
+            searchInput.focus();
+        });
+
+        function filterHistory(searchQuery) {
+            const historyItems = document.querySelectorAll('.history-list-item');
+            const headers = document.querySelectorAll('.history-date-header');
+            let hasVisibleItems = false;
+
+            headers.forEach(header => {
+                let headerHasVisibleItem = false;
+                let nextEl = header.nextElementSibling;
+                const groupItems = [];
+
+                while (nextEl && nextEl.classList.contains('history-list-item')) {
+                    groupItems.push(nextEl);
+                    nextEl = nextEl.nextElementSibling;
+                }
+
+                groupItems.forEach(item => {
+                    const queryText = item.getAttribute('data-query').toLowerCase();
+                    const urlText = item.getAttribute('data-url').toLowerCase();
+
+                    if (queryText.includes(searchQuery) || urlText.includes(searchQuery)) {
+                        item.style.display = 'flex';
+                        headerHasVisibleItem = true;
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                header.style.display = headerHasVisibleItem ? 'flex' : 'none';
+            });
+
+            let emptyMsg = document.getElementById('noSearchResultsMsg');
+            if (!hasVisibleItems && historyItems.length > 0 && searchQuery !== '') {
+                if (!emptyMsg) {
+                    emptyMsg = document.createElement('div');
+                    emptyMsg.id = 'noSearchResultsMsg';
+                    emptyMsg.className = 'no-results-msg';
+                    historyListContainer.appendChild(emptyMsg);
+                }
+                emptyMsg.style.display = 'block';
+                emptyMsg.innerHTML = `No results found for "<b>${escapeHTMLSettings(searchQuery)}</b>"`;
+            } else if (emptyMsg) {
+                emptyMsg.style.display = 'none';
+            }
+        }
+
+        function hideConfirmModal() {
+            confirmModal.classList.remove('show');
+        }
+
+        clearAllHistoryBtn.addEventListener('click', () => {
+            confirmModal.classList.add('show');
+        });
+
+        confirmModalCancel.addEventListener('click', hideConfirmModal);
+
+        confirmModalDelete.addEventListener('click', () => {
+            storage.set('searchHistory', JSON.stringify([]));
+
+            searchInput.value = '';
+            searchBox.classList.remove('expanded');
+
+            if (sectionTitle) sectionTitle.classList.remove('hide-element');
+            if (clearAllHistoryBtn) clearAllHistoryBtn.classList.remove('hide-element');
+            clearSearchBtn.classList.remove('show');
+
+            renderHistoryView();
+            hideConfirmModal();
+        });
+
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) hideConfirmModal();
+        });
+
+        function escapeHTMLSettings(str) {
+            if (!str) return "";
+            return str.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function buildSearchUrl(query, forceEngine = null) {
+            const engine = forceEngine || 'google';
+            const encoded = encodeURIComponent(query);
+            switch (engine) {
+                case 'duckduckgo': return "https://duckduckgo.com/?q=" + encoded;
+                case 'bing': return "https://www.bing.com/search?q=" + encoded;
+                case 'brave': return "https://search.brave.com/search?q=" + encoded;
+                case 'yahoo': return "https://search.yahoo.com/search?p=" + encoded;
+                case 'startpage': return "https://www.startpage.com/do/search?q=" + encoded;
+                case 'ecosia': return "https://www.ecosia.org/search?q=" + encoded;
+                default: return "https://www.google.com/search?q=" + encoded;
+            }
+        }
+
+        function isLikelyUrl(text) {
+            try {
+                const input = text.trim();
+                if (!input || /\s/.test(input)) return false;
+                if (!input.includes(".") && !input.includes(":")) return false;
+                const url = input.includes("://") ? input : "https://" + input;
+                new URL(url);
+                return true;
+            } catch (e) { return false; }
+        }
+
+        function buildUrl(text, forceEngine = null) {
+            let query = (text || "").trim();
+            if (!query) return null;
+            if (isLikelyUrl(query)) {
+                if (!query.startsWith("http://") && !query.startsWith("https://")) {
+                    query = "https://" + query;
+                }
+                return query;
+            }
+            return buildSearchUrl(query, forceEngine);
+        }
+
+        function renderHistoryView() {
+            let history = [];
+            try {
+                const rawHistory = storage.get('searchHistory');
+                if (rawHistory) {
+                    const parsed = JSON.parse(rawHistory);
+                    // Naya check
+                    if (Array.isArray(parsed)) {
+                        history = parsed;
+                    } else {
+                        history = [];
+                    }
+                }
+
+                if (history.length > 0 && typeof history[0] === 'string') {
+                    history = [];
+                }
+            } catch (e) {
+                console.error('History parse error:', e);
+                history = [];
+            }
+
+            if (history.length === 0) {
+                historyListContainer.innerHTML = `<p class="empty-history" style="color: var(--text-muted); text-align: center; padding: 20px 0;">No browsing history found.</p>`;
+                if (clearAllHistoryBtn) clearAllHistoryBtn.style.display = 'none';
+                if (searchBox) searchBox.style.display = 'none';
+                return;
+            }
+
+            if (clearAllHistoryBtn) clearAllHistoryBtn.style.display = 'inline-block';
+            if (searchBox) searchBox.style.display = 'flex';
+
+            const groupedOrder = [];
+            const groupedHistory = {};
+
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const todayStr = today.toDateString();
+            const yesterdayStr = yesterday.toDateString();
+
+            history.forEach((item) => {
+                const time = item.time;
+                let dateStr = 'Older Searches';
+
+                if (time) {
+                    const d = new Date(time);
+                    if (!isNaN(d.getTime())) {
+                        const weekday = d.toLocaleDateString(undefined, { weekday: 'long' });
+                        const day = d.getDate();
+                        const month = d.toLocaleDateString(undefined, { month: 'long' });
+                        const year = d.getFullYear();
+                        const fullDateStr = `${weekday}, ${day} ${month} ${year}`;
+
+                        if (d.toDateString() === todayStr) {
+                            dateStr = `Today - ${fullDateStr}`;
+                        } else if (d.toDateString() === yesterdayStr) {
+                            dateStr = `Yesterday - ${fullDateStr}`;
+                        } else {
+                            dateStr = fullDateStr;
+                        }
+                    }
+                }
+
+                if (!groupedHistory[dateStr]) {
+                    groupedHistory[dateStr] = [];
+                    groupedOrder.push(dateStr);
+                }
+                groupedHistory[dateStr].push(item);
+            });
+
+            const timeFormatter = new Intl.DateTimeFormat(undefined, {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+
+            let html = '';
+            for (const date of groupedOrder) {
+                const items = groupedHistory[date];
+
+                html += `
+                <div class="history-date-header">
+                    <span class="date-label">${escapeHTMLSettings(date)}</span>
+                </div>
+                `;
+
+                items.forEach((item) => {
+                    const query = item.query;
+                    const time = item.time;
+                    const savedEngine = item.engine || 'google';
+
+                    let timeStr = '--:--';
+                    if (time) {
+                        const d = new Date(time);
+                        if (!isNaN(d.getTime())) {
+                            timeStr = timeFormatter.format(d);
+                        }
+                    }
+
+                    const isUrl = isLikelyUrl(query);
+                    const url = buildUrl(query, savedEngine) || '#';
+                    const iconSvg = isUrl
+                        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`
+                        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+
+                    const engineDisplayNames = {
+                        'google': 'Google',
+                        'duckduckgo': 'DuckDuckGo',
+                        'bing': 'Bing',
+                        'brave': 'Brave Search',
+                        'yahoo': 'Yahoo!',
+                        'startpage': 'Startpage',
+                        'ecosia': 'Ecosia'
+                    };
+                    const subtext = isUrl ? url : `${engineDisplayNames[savedEngine] || 'Google'} Search`;
+
+                    html += `
+                    <div class="history-list-item" data-url="${escapeHTMLSettings(url)}" data-query="${escapeHTMLSettings(query)}">
+                        <div class="history-content">
+                            <div class="history-icon-wrapper">
+                                ${iconSvg}
+                            </div>
+                            <div class="history-text-group">
+                                <div class="history-query" title="${escapeHTMLSettings(query)}">${escapeHTMLSettings(query)}</div>
+                                <div class="history-subtext" title="${escapeHTMLSettings(timeStr)} • ${escapeHTMLSettings(subtext)}">
+                                    <span class="history-time">${escapeHTMLSettings(timeStr)}</span>
+                                    <span style="margin: 0 4px; opacity: 0.5;">•</span>
+                                    <span>${escapeHTMLSettings(subtext)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    <button class="history-delete-btn" data-id="${item.id}" aria-label="Delete item" title="Remove from history">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    </div>
+                    `;
+                });
+            }
+            historyListContainer.innerHTML = html;
+
+            historyListContainer.querySelectorAll('.history-delete-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = this.getAttribute('data-id');
+                    deleteSingleHistory(id);
+                });
+            });
+
+            historyListContainer.querySelectorAll('.history-list-item').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    if (e.target.closest('.history-delete-btn')) return;
+                    if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+                    e.preventDefault();
+
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+            });
+
+            const currentSearch = searchInput.value.trim().toLowerCase();
+            if (currentSearch) {
+                filterHistory(currentSearch);
+            }
+        }
+
+        function deleteSingleHistory(id) {
+            try {
+                let rawHistory = storage.get('searchHistory');
+                if (rawHistory) {
+                    let history = JSON.parse(rawHistory);
+                    if (Array.isArray(history)) {
+                        history = history.filter(item => String(item.id) !== String(id));
+                        storage.set('searchHistory', JSON.stringify(history));
+                    }
+                }
+            } catch (e) { console.error('Error deleting item:', e); }
+
+            renderHistoryView();
+        }
+
+        renderHistoryView();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description"
+        content="Play Gree Runner - An endless 2D running game. Jump, dodge obstacles, and beat your high score!">
+    <meta property="og:title" content="Gree Runner">
+    <meta property="og:description" content="Endless 2D Runner Game. Can you beat my high score?">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" href="game-192.png" type="image/png">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#22c55e">
+
+    <title>Gree Runner</title>
+    <style>
+        :root {
+            --bg-top: #0f172a;
+            --bg-bottom: #020617;
+            --accent: #22c55e;
+            --accent-soft: #4ade80;
+            --accent-strong: #16a34a;
+            --card-border: #1f2937;
+            --theme-btn-bg: rgba(34, 197, 94, 0.15);
+            --ground-light: #374151;
+            --ground-dark: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            outline: none;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--accent-soft);
+            outline-offset: 2px;
+        }
+
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #1f2937 0%, #020617 60%);
+            color: #e5e7eb;
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            overflow: hidden;
+        }
+
+        .shell {
+            width: 90vw;
+            max-width: 1000px;
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo-main {
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: 0.05em;
+        }
+
+        .logo-pill {
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: #9ca3af;
+        }
+
+        .scores {
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .scores span.value {
+            font-weight: 600;
+            color: var(--accent-soft);
+            display: inline-block;
+        }
+
+        .scores .label {
+            color: #9ca3af;
+        }
+
+        .game {
+            position: relative;
+            width: 1000px;
+            max-width: 100%;
+            height: 250px;
+            margin: 0 auto;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            background: linear-gradient(to top, var(--bg-bottom) 0%, var(--bg-top) 60%);
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(148, 163, 184, 0.06);
+            transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out, background 0.3s ease-out, outline-color 0.3s ease-out;
+            outline: 2px solid var(--accent-soft);
+            outline-offset: 0px;
+        }
+
+        .sky-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 15% 0%, rgba(148, 163, 184, 0.35), transparent 55%);
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .cloud {
+            position: absolute;
+            top: 24px;
+            width: 90px;
+            height: 28px;
+            background: rgba(148, 163, 184, 0.22);
+            border-radius: 999px;
+            filter: blur(0.4px);
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+            position: absolute;
+            background: inherit;
+            border-radius: inherit;
+        }
+
+        .cloud::before {
+            width: 52px;
+            height: 22px;
+            left: 8px;
+            top: -11px;
+        }
+
+        .cloud::after {
+            width: 44px;
+            height: 20px;
+            right: 10px;
+            top: -9px;
+        }
+
+        .cloud-1 {
+            left: 20%;
+            opacity: 0.9;
+            animation: cloudDrift1 22s ease-in-out infinite;
+        }
+
+        .cloud-2 {
+            left: 65%;
+            top: 40px;
+            opacity: 0.7;
+            animation: cloudDrift2 30s ease-in-out infinite;
+            animation-delay: -6s;
+        }
+
+        @keyframes cloudDrift1 {
+            0% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(-18px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes cloudDrift2 {
+            0% {
+                transform: scale(0.9) translateX(0);
+            }
+
+            50% {
+                transform: scale(0.9) translateX(16px);
+            }
+
+            100% {
+                transform: scale(0.9) translateX(0);
+            }
+        }
+
+        .ground {
+            position: absolute;
+            left: -50px;
+            bottom: 0;
+            width: calc(100% + 150px);
+            height: 36px;
+            background:
+                linear-gradient(to top, var(--bg-bottom) 0%, var(--bg-bottom) 10px, transparent 10px),
+                repeating-linear-gradient(to right, var(--ground-light) 0, var(--ground-light) 24px, var(--ground-dark) 24px, var(--ground-dark) 48px);
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            transition: background 0.3s ease-out;
+        }
+
+        .runner-wrap {
+            position: absolute;
+            left: 80px;
+            bottom: 36px;
+            width: 40px;
+            height: 40px;
+            will-change: transform;
+        }
+
+        .runner {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, var(--accent-soft), var(--accent), var(--accent-strong));
+            box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.9), 0 10px 20px rgba(0, 0, 0, 0.9);
+            transform-origin: center center;
+            transition: background 0.3s ease-out;
+            will-change: transform;
+        }
+
+        .runner::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.85);
+            top: 9px;
+            left: 10px;
+        }
+
+        .dust {
+            position: absolute;
+            bottom: 36px;
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.35);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dust.show {
+            animation: dustPop 0.25s ease-out;
+        }
+
+        @keyframes dustPop {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translate3d(-10px, -6px, 0) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        .obstacle {
+            position: absolute;
+            left: 0;
+            bottom: 36px;
+            width: 26px;
+            height: 58px;
+            border-radius: 8px 8px 4px 4px;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.9);
+            will-change: transform;
+            transition: background 0.3s ease-out;
+        }
+
+        .obstacle.normal {
+            background: linear-gradient(to bottom, #facc15, #eab308, #a16207);
+        }
+
+        .obstacle.tall {
+            background: linear-gradient(to bottom, #f97316, #ea580c, #9a3412);
+        }
+
+        .obstacle.fat {
+            background: linear-gradient(to bottom, #38bdf8, #0ea5e9, #0369a1);
+        }
+
+        .obstacle.short {
+            background: linear-gradient(to bottom, #a855f7, #7c3aed, #5b21b6);
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0s linear 0s;
+        }
+
+        .overlay-inner {
+            pointer-events: auto;
+            background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+            border-radius: 16px;
+            padding: 16px 18px;
+            max-width: 80%;
+            text-align: center;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
+            transform: scale(1) translateZ(0);
+            backface-visibility: hidden;
+            will-change: transform, opacity;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+        }
+
+        .overlay.hidden .overlay-inner {
+            pointer-events: none;
+            transform: scale(0.92) translateZ(0);
+        }
+
+        .overlay-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #e5e7eb;
+        }
+
+        .overlay-sub {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .overlay-btn {
+            position: relative;
+            border: none;
+            outline: none;
+            padding: 9px 24px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--accent-soft), var(--accent), var(--accent-strong));
+            color: #01210e;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(22, 163, 74, 0.5);
+            transition: filter 0.2s ease-out, box-shadow 0.2s ease-out, background 0.3s ease-out;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .overlay-btn:hover {
+                filter: brightness(1.1) saturate(1.1);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(34, 197, 94, 0.85), 0 0 14px rgba(74, 222, 128, 0.4);
+            }
+        }
+
+        .overlay-btn:active {
+            filter: brightness(0.95);
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(22, 163, 74, 0.6);
+        }
+
+        .footer {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #9ca3af;
+            padding: 0 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .footer.hide-footer {
+            opacity: 0;
+            transform: translateY(-16px);
+            pointer-events: none;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .footer-right {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.8);
+            color: #9ca3af;
+            padding: 4px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.3s ease-out, color 0.3s ease-out, border-color 0.3s ease-out;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .theme-btn:hover {
+                color: #e5e7eb;
+                border-color: rgba(148, 163, 184, 0.7);
+            }
+        }
+
+        .theme-btn.active {
+            border-color: var(--accent-soft);
+            color: var(--accent-soft);
+            background: var(--theme-btn-bg);
+        }
+
+        .settings-toggle {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: #9ca3af;
+            padding: 6px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease, border-color 0.3s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .settings-toggle:hover {
+                color: #e5e7eb;
+                border-color: rgba(148, 163, 184, 0.6);
+                transform: rotate(30deg);
+            }
+        }
+
+        .settings-popup {
+            position: absolute;
+            bottom: 40px;
+            right: 0;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 12px;
+            width: 220px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom right;
+        }
+
+        .settings-popup.hidden {
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            pointer-events: none;
+        }
+
+        .popup-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #e5e7eb;
+            padding: 4px 0;
+        }
+
+        .popup-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--accent-soft);
+            width: 38px;
+            height: 22px;
+            padding: 0;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .popup-btn:hover {
+                border-color: var(--accent-soft);
+            }
+        }
+
+        .arrow-btn {
+            color: #9ca3af;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .arrow-btn:hover {
+                border-color: var(--accent-soft);
+            }
+        }
+
+        .shortcuts-arrow {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+        }
+
+        .shortcuts-arrow.open {
+            transform: rotate(180deg);
+            color: var(--accent-soft);
+        }
+
+        .switch-btn {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .switch-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #9ca3af;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s ease;
+        }
+
+        .switch-btn.on .switch-thumb {
+            transform: translateX(16px);
+            background: var(--accent-soft);
+        }
+
+        .popup-divider {
+            height: 1px;
+            background: #1f2937;
+            margin: 2px 0;
+        }
+
+        .shortcuts-header {
+            user-select: none;
+        }
+
+        .shortcuts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .shortcuts-list.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 8px;
+            padding-bottom: 4px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .sc-keys {
+            display: flex;
+            gap: 4px;
+        }
+
+        .sc-key {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            color: #e5e7eb;
+            font-family: inherit;
+        }
+
+        .milestone {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(74, 222, 128, 0.6);
+            color: #bbf7d0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .milestone.show {
+            animation: milestonePop 0.7s ease-out;
+        }
+
+        @keyframes milestonePop {
+            0% {
+                transform: translateX(-50%) translateY(0) scale(0.9);
+                opacity: 0;
+            }
+
+            20% {
+                transform: translateX(-50%) translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            80% {
+                transform: translateX(-50%) translateY(-6px) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(-10px) scale(0.95);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .logo-main {
+                font-size: 18px;
+            }
+
+            .overlay-inner {
+                max-width: 92%;
+                padding: 14px 14px;
+            }
+
+            .hud,
+            .footer {
+                padding: 0 10px;
+            }
+
+            .settings-popup {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <header class="hud">
+            <div class="logo">
+                <span class="logo-main">Gree Runner</span>
+                <span class="logo-pill">Endless 2D</span>
+            </div>
+            <div class="scores">
+                <div>
+                    <span class="label">Score:</span>
+                    <span id="score" class="value">0</span>
+                    &nbsp;|&nbsp;
+                    <span class="label">Best:</span>
+                    <span id="bestScore" class="value">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game" id="gameArea" tabindex="0">
+            <div class="sky-glow"></div>
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+
+            <div class="ground" id="ground"></div>
+
+            <div class="runner-wrap" id="runnerWrap">
+                <div class="runner" id="runner"></div>
+            </div>
+
+            <div class="obstacle" id="obstacle"></div>
+            <div class="dust" id="dust"></div>
+
+            <div class="milestone" id="milestone"></div>
+
+            <div class="overlay" id="overlay">
+                <div class="overlay-inner">
+                    <div class="overlay-title" id="overlayTitle">Gree Runner</div>
+                    <div class="overlay-sub" id="overlaySub"></div>
+                    <button class="overlay-btn" id="playButton" type="button"></button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer" id="appFooter">
+            <div class="footer-left">
+                <div class="theme-buttons">
+                    <button class="theme-btn" data-theme="obsidian">Obsidian</button>
+                    <button class="theme-btn" data-theme="amber">Amber</button>
+                    <button class="theme-btn" data-theme="platinum">Platinum</button>
+                </div>
+            </div>
+
+            <div class="footer-right">
+                <button class="settings-toggle" id="settingsToggle" aria-label="Settings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                </button>
+
+                <div class="settings-popup hidden" id="settingsPopup">
+                    <div class="popup-row">
+                        <span>Sounds</span>
+                        <button class="popup-btn switch-btn" id="popupSoundBtn" type="button" role="switch"
+                            aria-checked="true" aria-label="Toggle sound">
+                            <span class="switch-thumb"></span>
+                        </button>
+                    </div>
+
+                    <div class="popup-divider"></div>
+
+                    <div>
+                        <div class="popup-row shortcuts-header">
+                            <span>Shortcuts</span>
+                            <button class="popup-btn arrow-btn" id="shortcutsToggleBtn">
+                                <svg class="shortcuts-arrow" id="shortcutsArrow" width="14" height="14"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="shortcuts-list" id="shortcutsList">
+                            <div class="shortcut-item">
+                                <span>Jump</span>
+                                <div class="sc-keys"><span class="sc-key">Space</span><span class="sc-key">↑</span>
+                                </div>
+                            </div>
+                            <div class="shortcut-item">
+                                <span>Pause / Resume</span>
+                                <span class="sc-key">P</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span>Mute Sound</span>
+                                <span class="sc-key">M</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span>Restart</span>
+                                <span class="sc-key">Enter</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const gameArea = document.getElementById('gameArea');
+        const runnerWrap = document.getElementById('runnerWrap');
+        const runnerEl = document.getElementById('runner');
+        const obstacleEl = document.getElementById('obstacle');
+        const scoreEl = document.getElementById('score');
+        const bestScoreEl = document.getElementById('bestScore');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlaySub = document.getElementById('overlaySub');
+        const playButton = document.getElementById('playButton');
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        const soundLabelBtn = document.getElementById('popupSoundBtn');
+        const settingsToggle = document.getElementById('settingsToggle');
+        const settingsPopup = document.getElementById('settingsPopup');
+        const appFooter = document.getElementById('appFooter');
+
+        const shortcutsToggleBtn = document.getElementById('shortcutsToggleBtn');
+        const shortcutsArrow = document.getElementById('shortcutsArrow');
+        const shortcutsList = document.getElementById('shortcutsList');
+
+        const groundEl = document.getElementById('ground');
+        const dustEl = document.getElementById('dust');
+        const milestoneEl = document.getElementById('milestone');
+
+        const THEMES = {
+            obsidian: {
+                '--bg-top': '#0f172a',
+                '--bg-bottom': '#020617',
+                '--accent': '#22c55e',
+                '--accent-soft': '#4ade80',
+                '--accent-strong': '#16a34a',
+                '--card-border': '#1f2937',
+                '--theme-btn-bg': 'rgba(34, 197, 94, 0.15)',
+                '--ground-light': '#374151',
+                '--ground-dark': '#111827'
+            },
+            amber: {
+                '--bg-top': '#78350f',
+                '--bg-bottom': '#451a03',
+                '--accent': '#facc15',
+                '--accent-soft': '#fde68a',
+                '--accent-strong': '#eab308',
+                '--card-border': '#7c2d12',
+                '--theme-btn-bg': 'rgba(250, 204, 21, 0.15)',
+                '--ground-light': '#92400e',
+                '--ground-dark': '#451a03'
+            },
+            platinum: {
+                '--bg-top': '#374151',
+                '--bg-bottom': '#111827',
+                '--accent': '#e5e7eb',
+                '--accent-soft': '#f9fafb',
+                '--accent-strong': '#d1d5db',
+                '--card-border': '#4b5563',
+                '--theme-btn-bg': 'rgba(229, 231, 235, 0.15)',
+                '--ground-light': '#9ca3af',
+                '--ground-dark': '#4b5563'
+            }
+        };
+
+        let currentTheme = 'obsidian';
+
+        function applyTheme(name) {
+            const theme = THEMES[name] || THEMES.obsidian;
+            currentTheme = name;
+
+            Object.entries(theme).forEach(([key, value]) => {
+                document.documentElement.style.setProperty(key, value);
+            });
+
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === name);
+            });
+
+            try { localStorage.setItem('gree_runner_theme', name); } catch (e) { }
+        }
+
+        let audioCtx = null;
+        let soundOn = true;
+        let bgInterval = null;
+        let bgStep = 0;
+
+        function initAudio() {
+            if (!audioCtx) {
+                try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+                catch (e) { soundOn = false; updateSoundLabel(); return; }
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => { });
+            }
+        }
+
+        function updateSoundLabel() {
+            soundLabelBtn.classList.toggle('on', soundOn);
+            soundLabelBtn.setAttribute('aria-checked', soundOn ? 'true' : 'false');
+            try { localStorage.setItem('gree_runner_sound', soundOn ? '1' : '0'); } catch (e) { }
+        }
+
+        function playBeep(freq = 440, duration = 120, volume = 0.25, type = 'square') {
+            if (!soundOn || !audioCtx) return;
+            if (audioCtx.state === 'suspended') { audioCtx.resume().catch(() => { }); }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + duration / 1000);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration / 1000);
+        }
+
+        function playJumpSound() { playBeep(720, 80, 0.18, 'square'); }
+        function playPerfectSound() {
+            playBeep(520, 90, 0.18, 'triangle');
+            setTimeout(() => playBeep(820, 90, 0.14, 'triangle'), 80);
+        }
+        function playGameOverSound() { playBeep(260, 220, 0.22, 'sawtooth'); }
+        function playPauseSound() { playBeep(420, 80, 0.16, 'square'); }
+
+        const bgPattern = [330, 392, 440, 0, 330, 392, 523, 0];
+
+        function startBackgroundMusic() {
+            if (!soundOn) return;
+            initAudio();
+            if (!audioCtx || bgInterval) return;
+            bgInterval = setInterval(() => {
+                if (!soundOn || !audioCtx) return;
+                const freq = bgPattern[bgStep % bgPattern.length];
+                bgStep++;
+                if (freq) playBeep(freq, 200, 0.12, 'sine');
+            }, 260);
+        }
+
+        function stopBackgroundMusic() {
+            if (bgInterval) { clearInterval(bgInterval); bgInterval = null; }
+        }
+
+        const GROUND_HEIGHT = 36;
+        const GROUND_Y = GROUND_HEIGHT;
+        const RUNNER_SIZE = 40;
+        const RUNNER_X = 80;
+
+        const GRAVITY = 2200;
+        const JUMP_VELOCITY = 700;
+        const MAX_JUMPS = 1;
+        const BASE_SPEED = 320;
+        const MAX_EXTRA_SPEED = 280;
+        const SCORE_TICK = 0.1;
+        const PERFECT_MIN_HEIGHT = 24;
+
+        const OBSTACLE_TYPES = [
+            { w: 26, h: 58, className: "normal" },
+            { w: 22, h: 46, className: "short" },
+            { w: 30, h: 52, className: "fat" },
+            { w: 24, h: 72, className: "tall" }
+        ];
+
+        let gameWidth = 660;
+        let lastTimestamp = null;
+        let state = 'menu';
+        let score = 0;
+        let scoreTimer = 0;
+        let bestScore = 0;
+        let perfectStreak = 0;
+        let bestStreakInRun = 0;
+        let lastRenderedScore = -1;
+
+        let runnerY = GROUND_Y;
+        let runnerVy = 0;
+        let jumpCount = 0;
+        let wasOnGround = true;
+        let runnerAngle = 0;
+        let groundX = 0;
+        let squashAmount = 0;
+        let squashDir = 1;
+
+        let obstacleX = -1000;
+        let obstacleWidth = 26;
+        let obstacleHeight = 58;
+        let obstaclePassed = false;
+        let jumpPeakHeight = 0;
+        let speed = BASE_SPEED;
+
+        (function loadSettings() {
+            try {
+                const storedTheme = localStorage.getItem('gree_runner_theme');
+                if (storedTheme && THEMES[storedTheme]) currentTheme = storedTheme;
+            } catch (e) { }
+            applyTheme(currentTheme);
+
+            try {
+                const soundPref = localStorage.getItem('gree_runner_sound');
+                if (soundPref === '0') soundOn = false;
+            } catch (e) { }
+            updateSoundLabel();
+
+            try {
+                const storedBest = localStorage.getItem('gree_runner_pro_best');
+                if (storedBest) {
+                    bestScore = parseInt(storedBest, 10) || 0;
+                    bestScoreEl.textContent = bestScore;
+                }
+            } catch (e) { }
+        })();
+
+        function setOverlay(title, subHtml, buttonLabel) {
+            overlayTitle.textContent = title;
+            overlaySub.innerHTML = subHtml;
+            playButton.textContent = buttonLabel;
+        }
+
+        function showFooter() { appFooter.classList.remove('hide-footer'); }
+        function hideFooter() {
+            appFooter.classList.add('hide-footer');
+            settingsPopup.classList.add('hidden');
+        }
+
+        function initPositions() {
+            gameWidth = gameArea.clientWidth || 660;
+            runnerY = GROUND_Y;
+            runnerVy = 0;
+            jumpCount = 0;
+            runnerAngle = 0;
+            updateDOM();
+            spawnNewObstacle(true);
+        }
+
+        function spawnNewObstacle(initial = false) {
+            const type = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+            obstacleWidth = type.w;
+            obstacleHeight = type.h;
+            obstacleEl.className = 'obstacle ' + type.className;
+            obstacleEl.style.width = obstacleWidth + 'px';
+            obstacleEl.style.height = obstacleHeight + 'px';
+
+            const minTime = initial ? 1.5 : 1.1;
+            const maxTime = initial ? 2.0 : 1.8;
+            const gapTime = minTime + Math.random() * (maxTime - minTime);
+            obstacleX = gameWidth + (speed * gapTime);
+            obstaclePassed = false;
+            jumpPeakHeight = 0;
+        }
+
+        function resetRun() {
+            score = 0;
+            scoreTimer = 0;
+            perfectStreak = 0;
+            bestStreakInRun = 0;
+            lastRenderedScore = -1;
+            milestonesShown.clear();
+            scoreEl.textContent = '0';
+            speed = BASE_SPEED;
+            runnerY = GROUND_Y;
+            runnerVy = 0;
+            jumpCount = 0;
+            runnerAngle = 0;
+            groundX = 0;
+            wasOnGround = true;
+            jumpPeakHeight = 0;
+            squashAmount = 0;
+            squashDir = 1;
+            spawnNewObstacle(true);
+            updateDOM();
+        }
+
+        function startGame() {
+            state = 'playing';
+            lastTimestamp = null;
+            overlay.classList.add('hidden');
+            hideFooter();
+            resetRun();
+            startBackgroundMusic();
+        }
+
+        function togglePause() {
+            if (state === 'playing') {
+                state = 'paused';
+                setOverlay('Paused', 'Game paused! Take a breath and resume your endless run.', 'Resume');
+                overlay.classList.remove('hidden');
+                showFooter();
+                stopBackgroundMusic();
+                playPauseSound();
+            } else if (state === 'paused') {
+                state = 'playing';
+                lastTimestamp = null;
+                overlay.classList.add('hidden');
+                hideFooter();
+                startBackgroundMusic();
+                playPauseSound();
+            }
+        }
+
+        function endGame() {
+            state = 'gameover';
+            const finalScore = Math.floor(score);
+            if (finalScore > bestScore) {
+                bestScore = finalScore;
+                bestScoreEl.textContent = bestScore;
+                try { localStorage.setItem('gree_runner_pro_best', bestScore); } catch (e) { }
+            }
+
+            setOverlay(
+                'Game Over',
+                `Score: <b style="color: var(--accent);">${finalScore}</b> &nbsp;|&nbsp; Streak: <b style="color: var(--accent);">${bestStreakInRun}</b><br>Great effort! Push your limits and beat this new score.`,
+                'Play Again'
+            );
+
+            overlay.classList.remove('hidden');
+            showFooter();
+            stopBackgroundMusic();
+            playGameOverSound();
+        }
+
+        function triggerDust() {
+            dustEl.classList.remove('show');
+            void dustEl.offsetWidth;
+            dustEl.style.left = (RUNNER_X + RUNNER_SIZE * 0.3) + 'px';
+            dustEl.classList.add('show');
+        }
+
+        const milestonesShown = new Set();
+        function checkMilestones(intScore) {
+            const important = [100, 200, 500, 800, 1200];
+            for (const m of important) {
+                if (intScore >= m && !milestonesShown.has(m)) {
+                    milestonesShown.add(m);
+                    showMilestone(m);
+                }
+            }
+        }
+
+        function showMilestone(m) {
+            let text = '';
+            if (m === 100) text = 'Nice warm up!';
+            else if (m === 200) text = 'Getting in the flow!';
+            else if (m === 500) text = 'You are on fire!';
+            else if (m === 800) text = 'Unstoppable!';
+            else text = 'Legend!';
+
+            milestoneEl.textContent = text;
+            milestoneEl.classList.remove('show');
+            void milestoneEl.offsetWidth;
+            milestoneEl.classList.add('show');
+        }
+
+        function jump() {
+            if (state !== 'playing') return;
+
+            if (jumpCount < MAX_JUMPS) {
+                runnerVy = JUMP_VELOCITY;
+                jumpCount++;
+                runnerAngle = 0;
+                squashAmount = 1;
+                squashDir = 1;
+                playJumpSound();
+            }
+        }
+
+        function hasCollision() {
+            const rLeft = RUNNER_X, rRight = RUNNER_X + RUNNER_SIZE;
+            const rBot = runnerY, rTop = runnerY + RUNNER_SIZE;
+            const oLeft = obstacleX + 4, oRight = obstacleX + obstacleWidth - 4;
+            const oBot = GROUND_Y, oTop = GROUND_Y + obstacleHeight - 4;
+
+            return (rRight > oLeft && rLeft < oRight) &&
+                (rTop > oBot && rBot < oTop);
+        }
+
+        function updateDOM() {
+            groundEl.style.transform = `skewX(-45deg) translate3d(${Math.round(groundX)}px, 0, 0)`;
+            runnerWrap.style.transform = `translate3d(0, -${runnerY - GROUND_Y}px, 0)`;
+            const scaleY = 1 + squashDir * squashAmount * 0.22;
+            const scaleX = 1 - squashDir * squashAmount * 0.16;
+            runnerEl.style.transform = `rotate(${runnerAngle}deg) scale(${scaleX}, ${scaleY})`;
+            obstacleEl.style.transform = `translate3d(${obstacleX}px, 0, 0)`;
+        }
+
+        function loop(timestamp) {
+            if (lastTimestamp === null) lastTimestamp = timestamp;
+            const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.1);
+            lastTimestamp = timestamp;
+
+            if (state === 'playing') {
+                runnerVy -= GRAVITY * dt;
+                runnerY += runnerVy * dt;
+
+                const onGround = runnerY <= GROUND_Y;
+                if (onGround) {
+                    if (!wasOnGround) {
+                        triggerDust();
+                        squashAmount = 1;
+                        squashDir = -1;
+                    }
+                    runnerY = GROUND_Y;
+                    runnerVy = 0;
+                    jumpCount = 0;
+                    runnerAngle = 0;
+                } else {
+                    runnerAngle += 900 * dt;
+                }
+                wasOnGround = onGround;
+
+                squashAmount = Math.max(0, squashAmount - dt * 6.5);
+
+                const heightAboveGround = runnerY - GROUND_Y;
+                if (heightAboveGround > jumpPeakHeight) jumpPeakHeight = heightAboveGround;
+
+                groundX -= speed * dt;
+                groundX %= 48;
+
+                obstacleX -= speed * dt;
+
+                if (!obstaclePassed && obstacleX + obstacleWidth < RUNNER_X) {
+                    obstaclePassed = true;
+                    if (jumpPeakHeight > PERFECT_MIN_HEIGHT) {
+                        perfectStreak++;
+                        if (perfectStreak > bestStreakInRun) bestStreakInRun = perfectStreak;
+                        score += 10 * perfectStreak;
+                        playPerfectSound();
+                    } else {
+                        perfectStreak = 0;
+                    }
+                }
+
+                if (obstacleX + obstacleWidth < -40) spawnNewObstacle(false);
+
+                scoreTimer += dt;
+                while (scoreTimer >= SCORE_TICK) { score += 1; scoreTimer -= SCORE_TICK; }
+
+                const intScore = Math.floor(score);
+                if (intScore !== lastRenderedScore) {
+                    scoreEl.textContent = intScore;
+                    checkMilestones(intScore);
+                    lastRenderedScore = intScore;
+                }
+
+                speed = BASE_SPEED + Math.min((intScore / 100) * 18, MAX_EXTRA_SPEED);
+
+                if (hasCollision()) endGame();
+            }
+
+            updateDOM();
+            requestAnimationFrame(loop);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space' || event.code === 'ArrowUp') {
+                event.preventDefault();
+                if (state === 'playing') jump();
+            } else if (event.code === 'Enter') {
+                event.preventDefault();
+                if (state === 'gameover' || state === 'menu') startGame();
+                else if (state === 'paused') togglePause();
+            } else if (event.code === 'KeyP') {
+                if (state === 'playing' || state === 'paused') togglePause();
+            } else if (event.code === 'KeyM') {
+                toggleSoundLogic();
+            }
+        });
+
+        function toggleSoundLogic() {
+            soundOn = !soundOn;
+            if (soundOn) {
+                initAudio();
+                if (state === 'playing') startBackgroundMusic();
+            } else {
+                stopBackgroundMusic();
+            }
+            updateSoundLabel();
+        }
+
+        gameArea.addEventListener('mousedown', (e) => {
+            if (state === 'playing') {
+                e.preventDefault();
+                jump();
+                gameArea.focus();
+            }
+        });
+
+        gameArea.addEventListener('touchstart', (e) => {
+            if (state === 'playing') {
+                e.preventDefault();
+                jump();
+                gameArea.focus();
+            }
+        }, { passive: false });
+
+        playButton.addEventListener('click', (e) => {
+            if (soundOn) initAudio();
+            if (state === 'paused') togglePause();
+            else startGame();
+            e.target.blur();
+            gameArea.focus();
+        });
+
+        themeButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            applyTheme(btn.dataset.theme);
+            e.target.blur();
+        }));
+
+        settingsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsPopup.classList.toggle('hidden');
+            e.currentTarget.blur();
+            gameArea.focus();
+        });
+
+        soundLabelBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSoundLogic();
+            e.currentTarget.blur();
+            gameArea.focus();
+        });
+
+        shortcutsToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            shortcutsList.classList.toggle('open');
+            shortcutsArrow.classList.toggle('open');
+            e.currentTarget.blur();
+            gameArea.focus();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!settingsPopup.contains(e.target) && !settingsToggle.contains(e.target)) {
+                settingsPopup.classList.add('hidden');
+                shortcutsList.classList.remove('open');
+                shortcutsArrow.classList.remove('open');
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            gameWidth = gameArea.clientWidth || 660;
+            if (obstacleX > gameWidth + 200) obstacleX = gameWidth + 120;
+        });
+
+        (function init() {
+            state = 'menu';
+            setOverlay('Gree Runner', 'Get ready! Avoid obstacles and chase a new high score.', 'Start Game');
+            overlay.classList.remove('hidden');
+            showFooter();
+            initPositions();
+            applyTheme(currentTheme);
+            requestAnimationFrame(loop);
+        })();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker Registered!'))
+                    .catch(err => console.log('Service Worker Registration Failed:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

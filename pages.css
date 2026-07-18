@@ -1,0 +1,163 @@
+/* ============================================
+   THEME TRANSITIONS
+   ============================================ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *:before,
+html.theme-transition *:after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, fill 0.3s ease, stroke 0.3s ease, background 0.3s ease !important;
+    transition-delay: 0s !important;
+}
+
+/* ============================================
+   SHARED VARIABLES
+   ============================================ */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #111111;
+    --card-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --accent-color: #f3b407;
+    --border-color: #eeeeee;
+    --text-muted: #666666;
+    --hover-bg: #f9f9f9;
+    --btn-bg: #f9f9f9;
+    --btn-hover: #f0f0f0;
+}
+
+html.dark-mode,
+body.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --accent-color: #ffca28;
+    --border-color: #333333;
+    --text-muted: #888888;
+    --hover-bg: #2a2a2a;
+    --btn-bg: #2a2a2a;
+    --btn-hover: #333333;
+}
+
+/* ============================================
+   BASE SETUP
+   ============================================ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 20px 20px;
+    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+body.page-enter {
+    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   SHARED HERO CARD
+   ============================================ */
+.hero-card {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #ffa726 100%);
+    border-radius: 16px;
+    padding: 48px 32px;
+    box-shadow: 0 4px 16px var(--shadow-color);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+html.dark-mode .hero-card,
+body.dark-mode .hero-card {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #ff9800 100%);
+}
+
+.close-btn-wrapper {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+.close-btn {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    transition: color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.close-btn:active {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.hero-content {
+    text-align: center;
+}
+
+.hero-title {
+    margin: 0 0 12px 0;
+    font-size: 42px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -1px;
+}
+
+.hero-subtitle {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0 auto;
+    max-width: 90%;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* ============================================
+   RESPONSIVE BASE
+   ============================================ */
+@media (max-width: 600px) {
+    body {
+        padding: 40px 16px 16px;
+    }
+
+    .hero-card {
+        padding: 36px 24px;
+    }
+
+    .hero-title {
+        font-size: 32px;
+    }
+}
