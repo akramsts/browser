@@ -291,19 +291,19 @@
                     <div class="setting-control">
                         <div class="custom-dropdown" id="engineDropdown">
                             <button type="button" class="dropdown-header">
-                                <span class="dropdown-value">Google</span>
+                                <span class="dropdown-value">DuckDuckGo</span>
                                 <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
                                     <path d="M6 9L1 4h10z" />
                                 </svg>
                             </button>
                             <div class="dropdown-options">
-                                <div class="dropdown-option" data-value="google">Google</div>
-                                <div class="dropdown-option" data-value="duckduckgo">DuckDuckGo</div>
-                                <div class="dropdown-option" data-value="bing">Bing</div>
-                                <div class="dropdown-option" data-value="brave">Brave Search</div>
-                                <div class="dropdown-option" data-value="yahoo">Yahoo</div>
+                                <div class="dropdown-option selected" data-value="duckduckgo">DuckDuckGo</div>
                                 <div class="dropdown-option" data-value="startpage">Startpage</div>
+                                <div class="dropdown-option" data-value="brave">Brave Search</div>
                                 <div class="dropdown-option" data-value="ecosia">Ecosia</div>
+                                <div class="dropdown-option" data-value="bing">Bing</div>
+                                <div class="dropdown-option" data-value="yahoo">Yahoo</div>
+                                <div class="dropdown-option" data-value="google">Google</div>
                             </div>
                         </div>
                     </div>
@@ -411,7 +411,7 @@
             storage.set('searchEngine', val);
         });
 
-        const savedEngine = storage.get('searchEngine') || 'google';
+        const savedEngine = storage.get('searchEngine') || 'duckduckgo';
         if (engineController && ['google', 'duckduckgo', 'bing', 'brave', 'yahoo', 'startpage', 'ecosia'].includes(savedEngine)) {
             engineController.setValue(savedEngine);
         }

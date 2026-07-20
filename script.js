@@ -248,7 +248,7 @@ function renderHistoryHTML(list, query = "") {
 function getSearchEngine() {
     const engine = storage.get('searchEngine');
     const validEngines = ['google', 'duckduckgo', 'bing', 'brave', 'yahoo', 'startpage', 'ecosia'];
-    return validEngines.includes(engine) ? engine : 'google';
+    return validEngines.includes(engine) ? engine : 'duckduckgo';
 }
 
 function buildSearchUrl(query) {
