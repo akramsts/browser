@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#f3b407">
     <link rel="apple-touch-icon" href="browser-192.png">
 
-    <title>Browser Core - Apps</title>
+    <title>Browser - Apps</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -34,7 +34,6 @@
             max-width: 640px;
         }
 
-        /* Content Card */
         .content-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -44,7 +43,6 @@
             text-align: center;
         }
 
-        /* Action Buttons */
         .action-btn {
             display: flex;
             align-items: center;
@@ -74,7 +72,6 @@
             border-color: var(--accent-color);
         }
 
-        /* Confirmation Popup Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -130,7 +127,6 @@
             line-height: 1.5;
         }
 
-        /* Modal Buttons */
         .modal-actions {
             display: flex;
             justify-content: center;
@@ -189,7 +185,6 @@
             color: var(--text-color);
         }
 
-        /* Footer */
         .footer-section {
             text-align: center;
             font-size: 14px;
@@ -272,7 +267,6 @@
 
         let currentDownloadUrl = "";
 
-        // Button click hone par popup dikhao
         downloadLinks.forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -284,7 +278,6 @@
             });
         });
 
-        // OK click karne par download start
         confirmBtn.addEventListener('click', () => {
             if (currentDownloadUrl) {
                 if (currentDownloadUrl.endsWith('.html')) {
@@ -301,12 +294,10 @@
             modal.classList.remove('show');
         });
 
-        // Cancel click karne par modal band karein
         cancelBtn.addEventListener('click', () => {
             modal.classList.remove('show');
         });
 
-        // Modal ke bahar (overlay) par click karne se popup close ho
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('show');

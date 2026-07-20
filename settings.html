@@ -10,15 +10,13 @@
     <link rel="manifest" href="browser-manifest.json">
     <meta name="theme-color" content="#f3b407">
     <link rel="apple-touch-icon" href="browser-192.png">
-
+    
     <title>Settings - Browser</title>
 
     <meta name="color-scheme" content="light dark">
 
-    <!-- FOUC Root Fix: Apply to HTML before body loads -->
     <script src="theme.js"></script>
 
-    <!-- Shared Pages CSS -->
     <link rel="stylesheet" href="pages.css">
 
     <style>
@@ -35,7 +33,6 @@
             max-width: 640px;
         }
 
-        /* Settings Cards */
         .settings-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -90,7 +87,6 @@
             line-height: 1.5;
         }
 
-        /* Custom Dropdowns (Popup Style) */
         .custom-dropdown {
             position: static;
             min-width: 180px;
@@ -134,7 +130,6 @@
             fill: #888;
         }
 
-        /* Popup Backdrop */
         .custom-dropdown::before {
             content: "";
             position: fixed;
@@ -325,7 +320,6 @@
             }
         };
 
-        // Custom Dropdown Initialization Logic
         function setupDropdown(dropdownId, onSelect) {
             const dropdown = document.getElementById(dropdownId);
             if (!dropdown) return null;
@@ -339,12 +333,10 @@
                 e.stopPropagation();
                 const isOpen = dropdown.classList.contains('open');
 
-                // Close all others first
                 document.querySelectorAll('.custom-dropdown').forEach(d => {
                     d.classList.remove('open');
                 });
 
-                // Agar open nahi tha, toh ab open karo (bina kisi jumpy animation hack ke)
                 if (!isOpen) {
                     dropdown.classList.add('open');
                 }
@@ -352,7 +344,7 @@
 
             if (optionsContainer) {
                 optionsContainer.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Modal ke upar click karne se modal band na ho
+                    e.stopPropagation();
                 });
             }
 
@@ -382,21 +374,17 @@
             };
         }
 
-        // Close dropdowns on outside click
         document.addEventListener('click', () => {
             document.querySelectorAll('.custom-dropdown').forEach(d => {
                 d.classList.remove('open');
             });
         });
 
-
-        // ----------------------------------------------------
-
         const themeController = setupDropdown('themeDropdown', (val) => {
             storage.set('theme', val);
             document.documentElement.classList.add('theme-transition');
             setTimeout(() => document.documentElement.classList.remove('theme-transition'), 300);
-            applyRootTheme(); // Use the global function from theme.js directly
+            applyRootTheme();
         });
 
         const currentTheme = storage.get('theme') || 'system';

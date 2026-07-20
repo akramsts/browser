@@ -1,6 +1,3 @@
-/* ============================================
-   COLOR VARIABLES
-   ============================================ */
 :root {
     --bg-color: #ffffff;
     --text-color: #111111;
@@ -28,9 +25,6 @@ body.dark-mode {
     --icon-color: #9aa0a6;
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
 html.theme-transition,
 html.theme-transition *,
 html.theme-transition *:before,
@@ -67,7 +61,6 @@ body {
     animation: pageFadeIn 0.15s ease-out forwards;
 }
 
-/* Page Navigation Entry Animation */
 body.page-enter {
     animation: pageFadeIn 0.15s ease-out forwards;
 }
@@ -84,9 +77,6 @@ body.page-enter {
     }
 }
 
-/* ============================================
-   TITLE
-   ============================================ */
 .title {
     font-size: 85px;
     font-weight: bold;
@@ -96,16 +86,12 @@ body.page-enter {
     user-select: none;
 }
 
-/* ============================================
-   SEARCH CONTAINER (unified box)
-   ============================================ */
 .search-container {
     width: 90%;
     max-width: 600px;
     position: relative;
 }
 
-/* Main search box */
 .search-box {
     width: 100%;
     background: var(--card-bg);
@@ -121,24 +107,18 @@ body.page-enter {
     z-index: 2;
 }
 
-/* When history is open, round only top corners */
 .search-container.history-open .search-box {
     border-radius: 24px 24px 0 0;
     box-shadow: 0 2px 6px var(--shadow-color);
 }
 
-/* Focused state */
 .search-box.focused {
     box-shadow: 0 4px 14px var(--shadow-color);
 }
 
-/* ============================================
-   INPUT FIELD
-   ============================================ */
 #searchInput {
     flex: 1;
     min-width: 0;
-    /* Prevents input from stretching outside the box on long sentences */
     font-size: 18px;
     border: none;
     outline: none;
@@ -152,9 +132,6 @@ body.page-enter {
     font-size: 18px;
 }
 
-/* ============================================
-   MIC ICON
-   ============================================ */
 .mic-icon {
     padding: 0;
     outline: none;
@@ -181,7 +158,6 @@ body.page-enter {
     background-color: var(--history-hover);
 }
 
-/* Pro-level invisible touch target for small icons */
 .mic-icon::after {
     content: "";
     position: absolute;
@@ -193,7 +169,6 @@ body.page-enter {
     z-index: 1;
 }
 
-/* Listening state */
 .mic-icon.listening {
     background: #ffe8b3;
     border-color: var(--mic-border);
@@ -222,9 +197,6 @@ body.dark-mode .mic-icon.listening {
     }
 }
 
-/* ============================================
-   CLEAR BUTTON
-   ============================================ */
 #clearBtn {
     border: none;
     background: transparent;
@@ -245,7 +217,6 @@ body.dark-mode .mic-icon.listening {
     position: relative;
 }
 
-/* Pro-level invisible touch target */
 #clearBtn::after {
     content: "";
     position: absolute;
@@ -271,9 +242,6 @@ body.dark-mode .mic-icon.listening {
     background: rgba(150, 150, 150, 0.2);
 }
 
-/* ============================================
-   HISTORY DROPDOWN (Chrome style)
-   ============================================ */
 .history-dropdown {
     position: absolute;
     top: 100%;
@@ -299,7 +267,6 @@ body.dark-mode .mic-icon.listening {
     transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s 0s;
 }
 
-/* Custom Scrollbar for Dropdown */
 .history-dropdown::-webkit-scrollbar {
     width: 6px;
 }
@@ -318,7 +285,6 @@ body.dark-mode .mic-icon.listening {
     background: var(--placeholder-color);
 }
 
-/* History item */
 .history-item {
     display: flex;
     align-items: center;
@@ -346,7 +312,6 @@ body.dark-mode .mic-icon.listening {
     background: var(--history-hover);
 }
 
-/* Clock icon */
 .history-icon {
     width: 28px;
     height: 28px;
@@ -362,7 +327,6 @@ body.dark-mode .mic-icon.listening {
     height: 18px;
 }
 
-/* History text */
 .history-text {
     flex: 1;
     font-size: 16px;
@@ -377,7 +341,6 @@ body.dark-mode .mic-icon.listening {
     font-weight: 600;
 }
 
-/* Delete button */
 .history-delete {
     width: 28px;
     height: 28px;
@@ -397,7 +360,6 @@ body.dark-mode .mic-icon.listening {
     position: relative;
 }
 
-/* Pro-level invisible touch target */
 .history-delete::after {
     content: "";
     position: absolute;
@@ -418,9 +380,6 @@ body.dark-mode .mic-icon.listening {
     background: rgba(150, 150, 150, 0.2);
 }
 
-/* ============================================
-   TOP RIGHT MENU
-   ============================================ */
 .top-menu {
     position: fixed;
     top: 16px;
@@ -446,7 +405,6 @@ body.dark-mode .mic-icon.listening {
     position: relative;
 }
 
-/* Premium invisible touch target (expands to 48x48) */
 .menu-btn::after {
     content: "";
     position: absolute;
@@ -519,9 +477,6 @@ body.dark-mode .mic-icon.listening {
     color: var(--text-color);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
 @media (max-width: 600px) {
     body {
         padding-top: 80px;

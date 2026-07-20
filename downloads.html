@@ -34,7 +34,6 @@
             max-width: 640px;
         }
 
-        /* Content Card */
         .content-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -44,7 +43,6 @@
             text-align: center;
         }
 
-        /* Action Buttons */
         .action-btn {
             display: flex;
             align-items: center;
@@ -74,7 +72,6 @@
             border-color: var(--accent-color);
         }
 
-        /* Play Button Highlight */
         .action-btn.play-btn {
             background: linear-gradient(135deg, var(--accent-color) 0%, #ff9800 100%);
             color: #ffffff;
@@ -90,7 +87,6 @@
             box-shadow: 0 6px 16px rgba(243, 180, 7, 0.4);
         }
 
-        /* Confirmation Popup Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -146,7 +142,6 @@
             line-height: 1.5;
         }
 
-        /* Modal Buttons */
         .modal-actions {
             display: flex;
             justify-content: center;
@@ -205,7 +200,6 @@
             color: var(--text-color);
         }
 
-        /* Footer */
         .footer-section {
             text-align: center;
             font-size: 14px;
@@ -297,18 +291,15 @@
         const modalTitle = document.querySelector('.modal-title');
         const modalMessage = document.getElementById('modalMessage');
 
-        // Nayi class 'popup-trigger' wale sabhi buttons ko select karein
         const popupTriggers = document.querySelectorAll('.popup-trigger');
 
         let currentActionUrl = "";
 
-        // Button click hone par popup dikhao
         popupTriggers.forEach(trigger => {
             trigger.addEventListener('click', function (e) {
                 e.preventDefault();
                 currentActionUrl = this.getAttribute('href');
 
-                // Button se title aur message nikaal kar modal mein set karein
                 modalTitle.textContent = this.getAttribute('data-title');
                 modalMessage.innerHTML = this.getAttribute('data-message');
 
@@ -316,7 +307,6 @@
             });
         });
 
-        // OK click karne par Play ya Download start karein
         confirmBtn.addEventListener('click', () => {
             if (currentActionUrl) {
                 if (currentActionUrl.endsWith('.html') || currentActionUrl.includes('github.io')) {
@@ -333,12 +323,10 @@
             modal.classList.remove('show');
         });
 
-        // Cancel click karne par modal band karein
         cancelBtn.addEventListener('click', () => {
             modal.classList.remove('show');
         });
 
-        // Modal ke bahar (overlay) par click karne se popup close ho
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('show');

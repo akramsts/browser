@@ -10,15 +10,13 @@
     <link rel="manifest" href="browser-manifest.json">
     <meta name="theme-color" content="#f3b407">
     <link rel="apple-touch-icon" href="browser-192.png">
-
-    <title>About - Browser Core</title>
+    
+    <title>About - Browser</title>
 
     <meta name="color-scheme" content="light dark">
 
-    <!-- FOUC Root Fix: Apply to HTML before body loads -->
     <script src="theme.js"></script>
 
-    <!-- Shared Pages CSS -->
     <link rel="stylesheet" href="pages.css">
 
     <style>
@@ -35,7 +33,6 @@
             max-width: 640px;
         }
 
-        /* Content Cards */
         .content-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -54,7 +51,6 @@
             padding-bottom: 12px;
         }
 
-        /* Features Grid */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -86,7 +82,6 @@
             line-height: 1.5;
         }
 
-        /* Details List */
         .details-list {
             display: flex;
             flex-direction: column;
@@ -117,7 +112,6 @@
             color: var(--text-color);
         }
 
-        /* Footer Section */
         .footer-section {
             text-align: center;
             font-size: 14px;
@@ -131,7 +125,6 @@
             color: var(--text-color);
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .content-card {
                 padding: 24px;
@@ -162,7 +155,7 @@
                 </a>
             </div>
             <div class="hero-content">
-                <h1 class="hero-title">Browser Core</h1>
+                <h1 class="hero-title">Browser</h1>
                 <p class="hero-subtitle">
                     A privacy-first start page that brings the web back to its roots—fast, focused, and
                     distraction-free.

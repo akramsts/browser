@@ -10,7 +10,7 @@
     <link rel="manifest" href="browser-manifest.json">
     <meta name="theme-color" content="#f3b407">
     <link rel="apple-touch-icon" href="browser-192.png">
-
+    
     <title>History - Browser</title>
 
     <meta name="color-scheme" content="light dark">
@@ -685,7 +685,6 @@
                 const rawHistory = storage.get('searchHistory');
                 if (rawHistory) {
                     const parsed = JSON.parse(rawHistory);
-                    // Naya check
                     if (Array.isArray(parsed)) {
                         history = parsed;
                     } else {

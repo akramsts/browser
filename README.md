@@ -1,4 +1,4 @@
-Browser Core is a lightweight, privacy-first start page designed to bring the web back to basics — fast, clean, and distraction-free. No tracking. No ads. No analytics.
+Browser is a lightweight, privacy-first start page designed to bring the web back to basics — fast, clean, and distraction-free. No tracking. No ads. No analytics.
 
 - Ultra-fast search experience
 - Privacy-first (no data sent to any server)

@@ -1,21 +1,27 @@
 {
-    "name": "Browser Core",
+    "name": "Browser",
     "short_name": "Browser",
+    "description": "A lightweight offline-capable browser shell for mobile and desktop.",
     "start_url": "./index.html",
+    "scope": "./",
     "display": "standalone",
+    "display_override": ["standalone", "fullscreen"],
     "background_color": "#ffffff",
     "theme_color": "#f3b407",
     "orientation": "portrait-primary",
+    "categories": ["utilities", "productivity"],
     "icons": [
         {
             "src": "browser-192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "browser-512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ]
 }

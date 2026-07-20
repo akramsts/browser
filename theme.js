@@ -18,7 +18,6 @@ function applyRootTheme() {
 applyRootTheme();
 document.addEventListener('DOMContentLoaded', applyRootTheme);
 
-// Tab switch hone par theme auto update ho (Multi-tab sync)
 window.addEventListener('storage', (e) => {
     if (e.key === 'theme') {
         applyRootTheme();
@@ -40,7 +39,7 @@ const handleThemeChange = (e) => {
 if (darkQuery.addEventListener) {
     darkQuery.addEventListener('change', handleThemeChange);
 } else {
-    darkQuery.addListener(handleThemeChange); // Older browsers support (Safari < 14)
+    darkQuery.addListener(handleThemeChange);
 }
 
 window.addEventListener('pageshow', () => {

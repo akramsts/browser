@@ -1,6 +1,3 @@
-// ============================================
-// STORAGE WRAPPER (with error handling)
-// ============================================
 const storage = {
     get: (key) => {
         try {
@@ -26,9 +23,6 @@ const storage = {
     }
 };
 
-// ============================================
-// DOM ELEMENTS
-// ============================================
 const searchInput = document.getElementById("searchInput");
 const micIcon = document.querySelector(".mic-icon");
 const clearBtn = document.getElementById("clearBtn");
@@ -52,15 +46,9 @@ searchBox.addEventListener("click", function () {
     searchInput.focus();
 });
 
-// ============================================
-// CONSTANTS
-// ============================================
 const DEFAULT_PLACEHOLDER = "Search anything or type a URL";
 const VOICE_MSG_TIMEOUT = 3000;
 
-// ============================================
-// STATE
-// ============================================
 let recognition = null;
 let isVoiceActive = false;
 let isRecognitionRunning = false;
@@ -70,9 +58,6 @@ let voiceTimeout = null;
 let messageTimeout = null;
 let cachedHistory = null;
 
-// ============================================
-// SEARCH HISTORY MANAGEMENT
-// ============================================
 function getSearchHistory() {
     const history = storage.get('searchHistory');
     if (!history) return [];
@@ -97,7 +82,6 @@ function saveSearchHistory(query) {
     const timestamp = Date.now();
     const normalizedQuery = query.trim().toLowerCase();
 
-    // Fix: Remove existing exact matches to prevent local storage duplication
     history = history.filter(item => item.query.toLowerCase() !== normalizedQuery);
 
     const newEntry = {
@@ -242,9 +226,6 @@ function renderHistoryHTML(list, query = "") {
     historyDropdown.innerHTML = html;
 }
 
-// ============================================
-// SEARCH ENGINE MANAGEMENT
-// ============================================
 function getSearchEngine() {
     const engine = storage.get('searchEngine');
     const validEngines = ['google', 'duckduckgo', 'bing', 'brave', 'yahoo', 'startpage', 'ecosia'];
@@ -266,9 +247,6 @@ function buildSearchUrl(query) {
     }
 }
 
-// ============================================
-// URL DETECTION
-// ============================================
 function escapeHTML(str) {
     if (!str) return "";
     return str.toString()
@@ -306,9 +284,6 @@ function buildUrl(text) {
     return buildSearchUrl(query);
 }
 
-// ============================================
-// SEARCH EXECUTION
-// ============================================
 function executeSearch(query, openInNewTab = false) {
     query = (query || "").replace(/[\r\n]+/g, ' ').trim();
     if (!query) return;
@@ -325,9 +300,6 @@ function executeSearch(query, openInNewTab = false) {
     }
 }
 
-// ============================================
-// VOICE RECOGNITION SETUP
-// ============================================
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
@@ -338,7 +310,6 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     recognition.onstart = function () {
         isRecognitionRunning = true;
 
-        // Fix: Start the 10-second timeout ONLY after mic permission is granted and recording starts
         clearTimeout(voiceTimeout);
         voiceTimeout = setTimeout(() => {
             if (isVoiceActive || isRecognitionRunning) {
@@ -493,9 +464,6 @@ function startVoice() {
     }
 }
 
-// ============================================
-// CLEAR BUTTON LOGIC
-// ============================================
 function handleClear() {
     searchInput.value = "";
     originalQuery = "";
@@ -517,9 +485,6 @@ function handleClear() {
     renderHistoryDropdown("");
 }
 
-// ============================================
-// EVENT LISTENERS
-// ============================================
 
 searchInput.addEventListener("focus", function () {
     if (searchBox) searchBox.classList.add("focused");
@@ -585,7 +550,6 @@ function updateHistorySelection(items) {
             if (query) searchInput.value = query;
             hasSelection = true;
 
-            // Modern native scroll logic
             item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
         } else {
@@ -724,9 +688,6 @@ document.addEventListener("click", function (e) {
     }
 });
 
-// ============================================
-// MENU FUNCTIONALITY
-// ============================================
 const menuBtn = document.getElementById("menuBtn");
 const menu = document.getElementById("menu");
 const topMenu = menuBtn ? menuBtn.closest(".top-menu") : null;
@@ -759,19 +720,12 @@ if (topMenu && menuBtn && menu) {
     });
 }
 
-// ============================================
-// CROSS-TAB SYNCHRONIZATION
-// ============================================
 window.addEventListener('storage', (e) => {
-    // Agar kisi aur tab mein history modify hoti hai, toh cache update kar lo
     if (e.key === 'searchHistory') {
         cachedHistory = getSearchHistory();
     }
 });
 
-// ============================================
-// PWA SERVICE WORKER REGISTRATION
-// ============================================
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./browser-sw.js')
