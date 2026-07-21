@@ -643,7 +643,7 @@
         }
 
         function buildSearchUrl(query, forceEngine = null) {
-            const engine = forceEngine || 'google';
+            const engine = forceEngine || 'duckduckgo';
             const encoded = encodeURIComponent(query);
             switch (engine) {
                 case 'duckduckgo': return "https://duckduckgo.com/?q=" + encoded;
@@ -660,9 +660,18 @@
             try {
                 const input = text.trim();
                 if (!input || /\s/.test(input)) return false;
-                if (!input.includes(".") && !input.includes(":")) return false;
-                const url = input.includes("://") ? input : "https://" + input;
-                new URL(url);
+
+                if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(input)) {
+                    new URL(input);
+                    return true;
+                }
+
+                if (!input.includes(".")) return false;
+
+                const domainPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/.*)?$/;
+                if (!domainPattern.test(input)) return false;
+
+                new URL("https://" + input);
                 return true;
             } catch (e) { return false; }
         }
@@ -768,7 +777,7 @@
                 items.forEach((item) => {
                     const query = item.query;
                     const time = item.time;
-                    const savedEngine = item.engine || 'google';
+                    const savedEngine = item.engine || 'duckduckgo';
 
                     let timeStr = '--:--';
                     if (time) {

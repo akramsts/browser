@@ -261,10 +261,18 @@ function isLikelyUrl(text) {
     try {
         const input = text.trim();
         if (!input || /\s/.test(input)) return false;
-        if (!input.includes(".") && !input.includes(":")) return false;
 
-        const url = input.includes("://") ? input : "https://" + input;
-        new URL(url);
+        if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(input)) {
+            new URL(input);
+            return true;
+        }
+
+        if (!input.includes(".")) return false;
+
+        const domainPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/.*)?$/;
+        if (!domainPattern.test(input)) return false;
+
+        new URL("https://" + input);
         return true;
     } catch (e) {
         return false;
@@ -464,7 +472,7 @@ function startVoice() {
     }
 }
 
-function handleClear() {
+function handleClear(reopenDropdown = true) {
     searchInput.value = "";
     originalQuery = "";
     selectedHistoryIndex = -1;
@@ -481,8 +489,13 @@ function handleClear() {
         try { recognition.stop(); } catch (e) { }
     }
 
-    searchInput.focus();
-    renderHistoryDropdown("");
+    if (reopenDropdown) {
+        searchInput.focus();
+        renderHistoryDropdown("");
+    } else {
+        hideHistoryDropdown();
+        searchInput.blur();
+    }
 }
 
 
@@ -622,7 +635,11 @@ document.addEventListener("keydown", function (e) {
             menu.classList.remove("show");
             return;
         }
-        handleClear();
+        if (historyDropdown.classList.contains('show')) {
+            hideHistoryDropdown();
+            return;
+        }
+        handleClear(false);
         return;
     }
 

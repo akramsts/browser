@@ -1,4 +1,4 @@
-const CACHE_NAME = 'browser-core-cache-v1';
+const CACHE_NAME = 'browser-core-cache-v2';
 const ASSETS = [
     './index.html',
     './about.html',
@@ -11,7 +11,8 @@ const ASSETS = [
     './script.js',
     './theme.js',
     './browser-192.png',
-    './browser-512.png'
+    './browser-512.png',
+    './browser-manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
@@ -28,7 +29,7 @@ self.addEventListener('activate', (e) => {
         caches.keys().then((keys) => {
             return Promise.all(
                 keys
-                    .filter((key) => key !== CACHE_NAME && key !== 'gree-runner-cache-v2')
+                    .filter((key) => key !== CACHE_NAME)
                     .map((key) => caches.delete(key))
             );
         }).then(() => self.clients.claim())

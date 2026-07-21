@@ -283,12 +283,7 @@
                 if (currentDownloadUrl.endsWith('.html')) {
                     window.location.href = currentDownloadUrl;
                 } else {
-                    const tempLink = document.createElement('a');
-                    tempLink.href = currentDownloadUrl;
-                    tempLink.setAttribute('download', '');
-                    document.body.appendChild(tempLink);
-                    tempLink.click();
-                    document.body.removeChild(tempLink);
+                    window.open(currentDownloadUrl, '_blank');
                 }
             }
             modal.classList.remove('show');

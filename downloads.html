@@ -309,15 +309,10 @@
 
         confirmBtn.addEventListener('click', () => {
             if (currentActionUrl) {
-                if (currentActionUrl.endsWith('.html') || currentActionUrl.includes('github.io')) {
+                if (currentActionUrl.endsWith('.html')) {
                     window.location.href = currentActionUrl;
                 } else {
-                    const tempLink = document.createElement('a');
-                    tempLink.href = currentActionUrl;
-                    tempLink.setAttribute('download', '');
-                    document.body.appendChild(tempLink);
-                    tempLink.click();
-                    document.body.removeChild(tempLink);
+                    window.open(currentActionUrl, '_blank');
                 }
             }
             modal.classList.remove('show');
