@@ -46,7 +46,7 @@ searchBox.addEventListener("click", function () {
     searchInput.focus();
 });
 
-const DEFAULT_PLACEHOLDER = "Search anything or type a URL";
+const DEFAULT_PLACEHOLDER = "Search anything";
 const VOICE_MSG_TIMEOUT = 3000;
 
 let recognition = null;
