@@ -109,22 +109,11 @@ function deleteHistoryItem(id) {
 
     cachedHistory = history;
 
-    const text = searchInput.value.trim();
-    if (history.length === 0) {
-        hideHistoryDropdown();
-        historyDropdown.innerHTML = "";
-        return;
-    }
-    renderHistoryDropdown(text);
+    renderHistoryDropdown(searchInput.value.trim());
 }
 
 function renderHistoryDropdown(inputText = "") {
     const history = cachedHistory !== null ? cachedHistory : getSearchHistory();
-
-    if (history.length === 0) {
-        hideHistoryDropdown();
-        return;
-    }
 
     const uniqueHistory = [];
     const seenQueries = new Set();
@@ -158,20 +147,21 @@ function renderHistoryDropdown(inputText = "") {
         visibleList = combined.slice(0, 5);
     }
 
-    if (visibleList.length === 0) {
+    const typedText = inputText.trim();
+    const showTyped = typedText !== "" && !seenQueries.has(text);
+
+    if (visibleList.length === 0 && !showTyped) {
         hideHistoryDropdown();
         historyDropdown.innerHTML = "";
         return;
     }
 
-    renderHistoryHTML(visibleList, text);
+    renderHistoryHTML(visibleList, text, showTyped ? typedText : "");
     historyDropdown.classList.add('show');
     searchContainer.classList.add('history-open');
 }
 
 function showHistoryDropdown() {
-    const history = getSearchHistory();
-    if (history.length === 0) return;
     renderHistoryDropdown(searchInput.value);
 }
 
@@ -180,9 +170,31 @@ function hideHistoryDropdown() {
     searchContainer.classList.remove('history-open');
 }
 
-function renderHistoryHTML(list, query = "") {
+function renderHistoryHTML(list, query = "", typedText = "") {
     let html = "";
     selectedHistoryIndex = -1;
+
+    if (typedText) {
+        html += `
+            <div class="history-item" role="menuitem">
+                <div class="history-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+
+                <div class="history-text" data-query="${escapeHTML(typedText)}">
+                    ${escapeHTML(typedText)}
+                </div>
+
+                <button class="history-delete" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        `;
+    }
 
     list.forEach(item => {
         const queryText = item.query;
@@ -672,7 +684,7 @@ if (historyDropdown) {
 
     historyDropdown.addEventListener('click', function (e) {
         const deleteBtn = e.target.closest('.history-delete');
-        if (deleteBtn) {
+        if (deleteBtn && deleteBtn.hasAttribute('data-id')) {
             e.stopPropagation();
             const id = deleteBtn.getAttribute('data-id');
             if (id) deleteHistoryItem(id);
