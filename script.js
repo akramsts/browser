@@ -66,10 +66,7 @@ function getSearchHistory() {
 
         if (!Array.isArray(parsed)) return [];
 
-        if (parsed.length > 0 && typeof parsed[0] === 'string') {
-            return [];
-        }
-        return parsed;
+        return parsed.filter(item => item && typeof item.query === 'string');
     } catch (e) {
         return [];
     }
@@ -442,11 +439,12 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         isRecognitionRunning = false;
 
         if (micIcon) micIcon.classList.remove("listening");
-        searchInput.placeholder = "Voice access unavailable";
+        const errorMsg = event.error === 'no-speech' ? "Didn't catch that" : "Voice access unavailable";
+        searchInput.placeholder = errorMsg;
 
         clearTimeout(messageTimeout);
         messageTimeout = setTimeout(() => {
-            if (searchInput.placeholder === "Voice access unavailable" && searchInput.value.trim().length === 0) {
+            if (searchInput.placeholder === errorMsg && searchInput.value.trim().length === 0) {
                 searchInput.placeholder = DEFAULT_PLACEHOLDER;
                 if (document.activeElement !== searchInput) clearBtn.classList.remove('visible');
             }
