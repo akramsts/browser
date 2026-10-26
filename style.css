@@ -251,7 +251,6 @@ body.dark-mode .mic-icon.listening {
     border-radius: 0 0 24px 24px;
     box-shadow: 0 4px 6px var(--shadow-color);
     overflow: hidden;
-    max-height: 50vh;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-4px);
