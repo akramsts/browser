@@ -269,20 +269,39 @@ function escapeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-function isLikelyUrl(text) {
-    try {
-        const input = text.trim();
-        if (!input || /\s/.test(input)) return false;
+const FILE_EXTENSIONS = new Set([
+    'js', 'jsx', 'ts', 'tsx', 'json', 'css', 'scss', 'html', 'htm', 'php', 'txt', 'md',
+    'py', 'sh', 'rs', 'rb', 'java', 'cpp', 'cs', 'yml', 'yaml', 'xml', 'csv', 'log', 'sql',
+    'bat', 'ini', 'cfg', 'conf', 'lock', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+    'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'mp3', 'mp4', 'wav', 'avi', 'mkv',
+    'mov', 'zip', 'rar', 'gz', 'tar', 'iso', 'dmg', 'exe', 'apk', 'jar'
+]);
 
-        if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(input)) {
+function isLocalAddress(input) {
+    return /^localhost(:\d{1,5})?(\/.*)?$/i.test(input) ||
+        /^(\d{1,3}\.){3}\d{1,3}(:\d{1,5})?(\/.*)?$/.test(input);
+}
+
+function isLikelyUrl(text) {
+    const input = (text || "").trim();
+    if (!input || /\s/.test(input)) return false;
+
+    try {
+        if (/^https?:\/\//i.test(input)) {
             new URL(input);
             return true;
         }
 
-        if (!input.includes(".")) return false;
+        if (isLocalAddress(input)) {
+            new URL("http://" + input);
+            return true;
+        }
 
-        const domainPattern = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d{1,5})?(\/.*)?$/;
-        if (!domainPattern.test(input)) return false;
+        const match = input.match(/^(?:[a-zA-Z0-9-]+\.)+([a-zA-Z]{2,})(:\d{1,5})?(\/.*)?$/);
+        if (!match) return false;
+
+        const isBareName = !match[2] && !match[3] && !/^www\./i.test(input);
+        if (isBareName && FILE_EXTENSIONS.has(match[1].toLowerCase())) return false;
 
         new URL("https://" + input);
         return true;
@@ -292,14 +311,13 @@ function isLikelyUrl(text) {
 }
 
 function buildUrl(text) {
-    let query = (text || "").trim();
+    const query = (text || "").trim();
     if (!query) return null;
 
     if (isLikelyUrl(query)) {
-        if (!query.startsWith("http://") && !query.startsWith("https://")) {
-            query = "https://" + query;
-        }
-        return query;
+        if (/^https?:\/\//i.test(query)) return query;
+        if (isLocalAddress(query)) return "http://" + query;
+        return "https://" + query;
     }
     return buildSearchUrl(query);
 }

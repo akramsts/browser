@@ -47,11 +47,11 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding: 60px 20px 20px;
-    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.page-enter {
-    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes pageFadeIn {

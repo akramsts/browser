@@ -9,6 +9,7 @@
     --history-hover: rgba(0, 0, 0, 0.05);
     --border-color: #eeeeee;
     --icon-color: #5f6368;
+    --accent-color: #f3b407;
 }
 
 html.dark-mode,
@@ -23,6 +24,7 @@ body.dark-mode {
     --history-hover: rgba(255, 255, 255, 0.1);
     --border-color: #333333;
     --icon-color: #9aa0a6;
+    --accent-color: #ffca28;
 }
 
 html.theme-transition,
@@ -58,11 +60,11 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     padding-top: 120px;
     transition: background 0.3s ease, color 0.3s ease;
-    animation: pageFadeIn 0.15s ease-out forwards;
+    animation: pageFadeIn 0.15s ease-out;
 }
 
 body.page-enter {
-    animation: pageFadeIn 0.15s ease-out forwards;
+    animation: pageFadeIn 0.15s ease-out;
 }
 
 @keyframes pageFadeIn {
@@ -134,7 +136,6 @@ body.page-enter {
 
 .mic-icon {
     padding: 0;
-    outline: none;
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -213,7 +214,6 @@ body.dark-mode .mic-icon.listening {
     pointer-events: none;
     transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
     flex-shrink: 0;
-    outline: none;
     position: relative;
 }
 
@@ -389,7 +389,6 @@ body.dark-mode .mic-icon.listening {
 .menu-btn {
     background: transparent;
     border: none;
-    outline: none;
     cursor: pointer;
     user-select: none;
     padding: 0;

@@ -25,10 +25,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        *:focus {
-            outline: none;
-        }
-
         .container {
             width: 100%;
             max-width: 640px;
@@ -87,45 +83,24 @@
             box-shadow: 0 6px 16px rgba(243, 180, 7, 0.4);
         }
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9998;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0s 0.2s;
-            padding: 20px;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.2s ease, visibility 0s 0s;
-        }
-
-        .modal-card {
+        dialog.modal-card {
             background: var(--card-bg);
+            color: var(--text-color);
+            border: none;
             border-radius: 16px;
-            width: 100%;
+            width: calc(100% - 40px);
             max-width: 340px;
+            padding: 0;
+            box-shadow: 0 10px 40px var(--shadow-color);
+        }
+
+        dialog.modal-card::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
             padding: 30px 24px 24px;
             text-align: center;
-            box-shadow: 0 10px 40px var(--shadow-color);
-            transform: scale(0.95);
-            transition: transform 0.2s ease-out;
-            position: relative;
-            z-index: 10000;
-        }
-
-        .modal-overlay.show .modal-card {
-            transform: scale(1);
         }
 
         .modal-title {
@@ -273,8 +248,8 @@
         </footer>
     </main>
 
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-card">
+    <dialog id="confirmModal" class="modal-card">
+        <div class="modal-content">
             <h3 class="modal-title">Confirm Download</h3>
             <p class="modal-text" id="modalMessage">Do you want to download this file?</p>
             <div class="modal-actions">
@@ -282,7 +257,7 @@
                 <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">OK</button>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <script>
         const modal = document.getElementById('confirmModal');
@@ -303,7 +278,7 @@
                 modalTitle.textContent = this.getAttribute('data-title');
                 modalMessage.innerHTML = this.getAttribute('data-message');
 
-                modal.classList.add('show');
+                modal.showModal();
             });
         });
 
@@ -315,16 +290,16 @@
                     window.open(currentActionUrl, 'GreeRunner');
                 }
             }
-            modal.classList.remove('show');
+            modal.close();
         });
 
         cancelBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
+            modal.close();
         });
 
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.classList.remove('show');
+                modal.close();
             }
         });
     </script>
