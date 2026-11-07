@@ -209,7 +209,7 @@
         </header>
 
         <section class="content-card">
-            <a href="https://akramsts.github.io/web-game/" class="action-btn play-btn popup-trigger"
+            <a href="https://akramsts.github.io/web-game/" target="GreeWebTab" class="action-btn play-btn popup-trigger"
                 data-title="Play Game" data-message="Do you want to start <b>Gree Runner</b> now?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor"
                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -218,7 +218,7 @@
                 Play Game in Browser
             </a>
 
-            <a href="https://github.com/akramsts/android-game/releases/download/1.0/GreeRunner-Android.apk"
+            <a href="https://github.com/akramsts/android-game/releases/download/1.0/GreeRunner-Android.apk" target="DownloadTab"
                 class="action-btn popup-trigger" data-title="Confirm Download"
                 data-message="Do you want to download <b>Gree Runner for Android</b>?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -230,7 +230,7 @@
                 Download for Android
             </a>
 
-            <a href="https://github.com/akramsts/pc-game/releases/download/1.0/GreeRunner-Setup.exe"
+            <a href="https://github.com/akramsts/pc-game/releases/download/1.0/GreeRunner-Setup.exe" target="DownloadTab"
                 class="action-btn popup-trigger" data-title="Confirm Download"
                 data-message="Do you want to download <b>Gree Runner for Windows</b>?">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -269,11 +269,13 @@
         const popupTriggers = document.querySelectorAll('.popup-trigger');
 
         let currentActionUrl = "";
+        let currentTarget = "";
 
         popupTriggers.forEach(trigger => {
             trigger.addEventListener('click', function (e) {
                 e.preventDefault();
                 currentActionUrl = this.getAttribute('href');
+                currentTarget = this.getAttribute('target');
 
                 modalTitle.textContent = this.getAttribute('data-title');
                 modalMessage.innerHTML = this.getAttribute('data-message');
@@ -287,7 +289,7 @@
                 if (currentActionUrl.endsWith('.html')) {
                     window.location.href = currentActionUrl;
                 } else {
-                    window.open(currentActionUrl, 'GreeRunner');
+                    window.open(currentActionUrl, currentTarget);
                 }
             }
             modal.close();

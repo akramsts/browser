@@ -1,3 +1,5 @@
+window.name = 'BrowserTab';
+
 function applyRootTheme() {
     let theme = 'system';
     try {
